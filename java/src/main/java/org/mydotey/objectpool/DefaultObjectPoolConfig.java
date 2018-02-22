@@ -71,7 +71,7 @@ public class DefaultObjectPoolConfig<T> implements ObjectPoolConfig<T>, Cloneabl
 
         private static Logger _logger = LoggerFactory.getLogger(ObjectPool.class);
 
-        protected static final Consumer<Entry> DEFAULT_ON_ENTRY_CREATE = e -> {
+        protected static final Consumer<Entry> DEFAULT_ON_CREATE = e -> {
         };
 
         protected static final Consumer<Entry> DEFAULT_ON_CLOSE = e -> {
@@ -88,7 +88,7 @@ public class DefaultObjectPoolConfig<T> implements ObjectPoolConfig<T>, Cloneabl
 
         protected AbstractBuilder() {
             _config = newPoolConfig();
-            _config._onCreate = (Consumer) DEFAULT_ON_ENTRY_CREATE;
+            _config._onCreate = (Consumer) DEFAULT_ON_CREATE;
             _config._onClose = (Consumer) DEFAULT_ON_CLOSE;
         }
 
