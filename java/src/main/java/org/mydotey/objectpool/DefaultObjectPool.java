@@ -228,10 +228,10 @@ public class DefaultObjectPool<T> implements ObjectPool<T> {
             _acquiredSize.decrementAndGet();
         }
 
-        releaseNumber(defaultEntry.getKey());
+        releaseKey(defaultEntry.getKey());
     }
 
-    protected void releaseNumber(Object key) {
+    protected void releaseKey(Object key) {
         getEntry(key).setStatus(DefaultEntry.Status.AVAILABLE);
         _availableKeys.addFirst(key);
     }

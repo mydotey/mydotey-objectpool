@@ -128,16 +128,16 @@ public class DefaultAutoScaleObjectPool<T> extends DefaultObjectPool<T> implemen
             }
         }
 
-        releaseNumber(key);
+        releaseKey(key);
         return null;
     }
 
     @Override
-    protected void releaseNumber(Object key) {
-        submitTaskSafe(() -> doReleaseNumber(key));
+    protected void releaseKey(Object key) {
+        submitTaskSafe(() -> doReleaseKey(key));
     }
 
-    protected void doReleaseNumber(Object key) {
+    protected void doReleaseKey(Object key) {
         synchronized (key) {
             AutoScaleEntry<T> entry = getEntry(key);
             if (entry.getStatus() == AutoScaleEntry.Status.PENDING_REFRESH) {
@@ -148,7 +148,7 @@ public class DefaultAutoScaleObjectPool<T> extends DefaultObjectPool<T> implemen
             } else
                 entry.renew();
 
-            super.releaseNumber(key);
+            super.releaseKey(key);
         }
     }
 
