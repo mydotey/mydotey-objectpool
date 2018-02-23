@@ -6,66 +6,57 @@ import java.util.Objects;
 import org.mydotey.objectpool.ObjectPool;
 import org.mydotey.objectpool.ObjectPoolConfig;
 import org.mydotey.objectpool.ObjectPool.Entry;
-import org.mydotey.objectpool.autoscale.AutoScaleObjectPoolConfig;
 import org.mydotey.objectpool.facade.ObjectPools;
 
 /**
  * @author koqizhao
  *
- *         Feb 6, 2018
+ * Feb 6, 2018
  */
 public class DefaultThreadPool implements ThreadPool {
 
-	private ObjectPool<WorkerThread> _objectPool;
+    private ObjectPool<WorkerThread> _objectPool;
 
-	public DefaultThreadPool(ThreadPoolConfig.Builder builder) {
-		_objectPool = ObjectPools.newObjectPool(newObjectPoolConfig(builder));
-	}
+    public DefaultThreadPool(ThreadPoolConfig.Builder builder) {
+        _objectPool = newObjectPool(builder);
+    }
 
-	protected ObjectPoolConfig<WorkerThread> newObjectPoolConfig(ThreadPoolConfig.Builder builder) {
-		return ((DefaultThreadPoolConfig.Builder) builder).setThreadPool(this).build();
-	}
+    protected ObjectPool<WorkerThread> newObjectPool(ThreadPoolConfig.Builder builder) {
+        ObjectPoolConfig<WorkerThread> config = ((DefaultThreadPoolConfig.Builder) builder).setThreadPool(this).build();
+        return ObjectPools.newObjectPool(config);
+    }
 
-	public DefaultThreadPool(AutoScaleThreadPoolConfig.Builder builder) {
-		_objectPool = ObjectPools.newAutoScaleObjectPool(newAutoScaleObjectPoolConfig(builder));
-	}
+    protected ObjectPool<WorkerThread> getObjectPool() {
+        return _objectPool;
+    }
 
-	protected AutoScaleObjectPoolConfig<WorkerThread> newAutoScaleObjectPoolConfig(
-			AutoScaleThreadPoolConfig.Builder builder) {
-		return ((DefaultAutoScaleThreadPoolConfig.Builder) builder).setThreadPool(this).build();
-	}
+    @Override
+    public int getSize() {
+        return getObjectPool().getSize();
+    }
 
-	protected ObjectPool<WorkerThread> getObjectPool() {
-		return _objectPool;
-	}
+    @Override
+    public void submit(Runnable task) throws InterruptedException {
+        Objects.requireNonNull(task, "task is null");
 
-	@Override
-	public int getSize() {
-		return getObjectPool().getSize();
-	}
+        Entry<WorkerThread> entry = getObjectPool().acquire();
+        entry.getObject().setTask(task);
+    }
 
-	@Override
-	public void submit(Runnable task) throws InterruptedException {
-		Objects.requireNonNull(task, "task is null");
+    @Override
+    public boolean trySubmit(Runnable task) {
+        Objects.requireNonNull(task, "task is null");
 
-		Entry<WorkerThread> entry = getObjectPool().acquire();
-		entry.getObject().setTask(task);
-	}
+        Entry<WorkerThread> entry = getObjectPool().tryAcquire();
+        if (entry == null)
+            return false;
 
-	@Override
-	public boolean trySubmit(Runnable task) {
-		Objects.requireNonNull(task, "task is null");
+        entry.getObject().setTask(task);
+        return true;
+    }
 
-		Entry<WorkerThread> entry = getObjectPool().tryAcquire();
-		if (entry == null)
-			return false;
-
-		entry.getObject().setTask(task);
-		return true;
-	}
-
-	@Override
-	public void close() throws IOException {
-		getObjectPool().close();
-	}
+    @Override
+    public void close() throws IOException {
+        getObjectPool().close();
+    }
 }

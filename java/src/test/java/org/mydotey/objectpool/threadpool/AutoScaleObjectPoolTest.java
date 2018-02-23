@@ -6,9 +6,9 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.mydotey.objectpool.autoscale.AutoScaleObjectPoolConfig;
 import org.mydotey.objectpool.facade.ThreadPools;
-import org.mydotey.objectpool.threadpool.AutoScaleThreadPoolConfig;
 import org.mydotey.objectpool.threadpool.ThreadPool;
 import org.mydotey.objectpool.threadpool.WorkerThread;
+import org.mydotey.objectpool.threadpool.autoscale.AutoScaleThreadPoolConfig;
 
 /**
  * @author koqizhao

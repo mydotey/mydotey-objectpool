@@ -16,7 +16,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 
         protected internal new class Builder : ObjectPoolConfig<WorkerThread>.Builder, IBuilder
         {
-            private DefaultThreadPool _threadPool;
+            private IThreadPool _threadPool;
 
             protected override ObjectPoolConfig<WorkerThread> NewPoolConfig()
             {
@@ -46,7 +46,7 @@ namespace MyDotey.ObjectPool.ThreadPool
                 if (_threadPool == null)
                     throw new ArgumentNullException("threadPool is null");
 
-                DefaultThreadPool pool = _threadPool;
+                DefaultThreadPool pool = (DefaultThreadPool)_threadPool;
                 SetObjectFactory(() => new WorkerThread(t => pool.ObjectPool.Release(t.PoolEntry)))
                         .SetOnCreate(e =>
                         {

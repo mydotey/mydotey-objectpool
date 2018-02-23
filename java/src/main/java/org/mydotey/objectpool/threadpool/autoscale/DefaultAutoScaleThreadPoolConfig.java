@@ -1,6 +1,8 @@
-package org.mydotey.objectpool.threadpool;
+package org.mydotey.objectpool.threadpool.autoscale;
 
 import org.mydotey.objectpool.autoscale.DefaultAutoScaleObjectPoolConfig;
+import org.mydotey.objectpool.threadpool.ThreadPool;
+import org.mydotey.objectpool.threadpool.WorkerThread;
 
 /**
  * @author koqizhao
@@ -62,9 +64,9 @@ public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPool
         @Override
         public DefaultAutoScaleThreadPoolConfig build() {
             if (_threadPool == null)
-                throw new IllegalStateException("_threadPool is null");
+                throw new IllegalStateException("threadPool is null");
 
-            DefaultThreadPool pool = (DefaultThreadPool) _threadPool;
+            DefaultAutoScaleThreadPool pool = (DefaultAutoScaleThreadPool) _threadPool;
             setObjectFactory(() -> new WorkerThread(t -> pool.getObjectPool().release(t.getPoolEntry())))
                     .setOnCreate(e -> {
                         e.getObject().setPoolEntry(e);

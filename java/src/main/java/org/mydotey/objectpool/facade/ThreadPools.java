@@ -1,11 +1,12 @@
 package org.mydotey.objectpool.facade;
 
-import org.mydotey.objectpool.threadpool.AutoScaleThreadPoolConfig;
-import org.mydotey.objectpool.threadpool.DefaultAutoScaleThreadPoolConfig;
 import org.mydotey.objectpool.threadpool.DefaultThreadPool;
 import org.mydotey.objectpool.threadpool.DefaultThreadPoolConfig;
 import org.mydotey.objectpool.threadpool.ThreadPool;
 import org.mydotey.objectpool.threadpool.ThreadPoolConfig;
+import org.mydotey.objectpool.threadpool.autoscale.AutoScaleThreadPoolConfig;
+import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPool;
+import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPoolConfig;
 
 /**
  * @author koqizhao
@@ -27,7 +28,7 @@ public class ThreadPools {
     }
 
     public static ThreadPool newAutoScaleThreadPool(AutoScaleThreadPoolConfig.Builder builder) {
-        return new DefaultThreadPool(builder);
+        return new DefaultAutoScaleThreadPool(builder);
     }
 
 }

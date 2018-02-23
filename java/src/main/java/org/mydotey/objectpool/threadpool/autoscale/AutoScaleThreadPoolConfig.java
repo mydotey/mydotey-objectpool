@@ -1,4 +1,6 @@
-package org.mydotey.objectpool.threadpool;
+package org.mydotey.objectpool.threadpool.autoscale;
+
+import org.mydotey.objectpool.threadpool.ThreadPoolConfig;
 
 /**
  * @author koqizhao

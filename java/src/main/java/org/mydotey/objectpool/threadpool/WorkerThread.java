@@ -26,7 +26,7 @@ public class WorkerThread extends Thread {
 
     private AtomicBoolean _isStarted = new AtomicBoolean();
 
-    protected WorkerThread(Consumer<WorkerThread> onTaskComplete) {
+    public WorkerThread(Consumer<WorkerThread> onTaskComplete) {
         Objects.requireNonNull(onTaskComplete, "onTaskComplete is null");
         _onTaskComplete = onTaskComplete;
         setDaemon(true);
@@ -74,11 +74,11 @@ public class WorkerThread extends Thread {
         }
     }
 
-    protected void setPoolEntry(Entry<WorkerThread> poolEntry) {
+    public void setPoolEntry(Entry<WorkerThread> poolEntry) {
         _poolEntry = poolEntry;
     }
 
-    protected Entry<WorkerThread> getPoolEntry() {
+    public Entry<WorkerThread> getPoolEntry() {
         return _poolEntry;
     }
 
