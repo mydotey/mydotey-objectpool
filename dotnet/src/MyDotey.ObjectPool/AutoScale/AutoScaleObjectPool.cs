@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using MyDotey.ObjectPool.ThreadPool;
+using MyDotey.ObjectPool.Facade;
 
 /**
- * @author koqizhao
+ * @author koqizhao}
  *
  * Feb 23, 2018
  */
@@ -19,6 +21,8 @@ namespace MyDotey.ObjectPool.AutoScale
 
         protected volatile int _scalingOut;
         protected Action _scaleOutTask;
+
+        protected IThreadPool _threadPool;
 
         public new virtual IAutoScaleObjectPoolConfig<T> Config { get { return (AutoScaleObjectPoolConfig<T>)base.Config; } }
 
@@ -54,6 +58,10 @@ namespace MyDotey.ObjectPool.AutoScale
                     Interlocked.CompareExchange(ref _scalingOut, 1, 0);
                 }
             };
+
+            ThreadPool.IBuilder builder = ThreadPools.NewThreadPoolConfigBuilder();
+            builder.SetMinSize(1).SetMaxSize(1);
+            _threadPool = ThreadPools.NewThreadPool(builder);
         }
 
         protected override ObjectPool<T>.Entry TryAddNewEntryAndAcquireOne()
@@ -275,6 +283,7 @@ namespace MyDotey.ObjectPool.AutoScale
             try
             {
                 _taskScheduler.Dispose();
+                _threadPool.Dispose();
             }
             catch (Exception e)
             {
@@ -286,7 +295,7 @@ namespace MyDotey.ObjectPool.AutoScale
         {
             try
             {
-                //_taskScheduler.Submit(task);
+                _threadPool.Submit(task);
             }
             catch (Exception ex)
             {

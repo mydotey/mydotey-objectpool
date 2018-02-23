@@ -16,7 +16,7 @@ namespace MyDotey.ObjectPool.Facade
             return new ThreadPoolConfig.Builder();
         }
 
-        public static IThreadPool NewThreadPool<T>(ThreadPool.IBuilder builder)
+        public static IThreadPool NewThreadPool(ThreadPool.IBuilder builder)
         {
             return new DefaultThreadPool(builder);
         }
