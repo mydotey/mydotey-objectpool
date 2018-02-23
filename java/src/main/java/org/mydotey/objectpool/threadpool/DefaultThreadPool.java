@@ -1,6 +1,5 @@
 package org.mydotey.objectpool.threadpool;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -15,12 +14,12 @@ import org.mydotey.objectpool.facade.ObjectPools;
  *
  *         Feb 6, 2018
  */
-public class DefaultThreadPool implements Closeable, ThreadPool {
+public class DefaultThreadPool implements ThreadPool {
 
-	private ObjectPool<WorkerThread> _threadPool;
+	private ObjectPool<WorkerThread> _objectPool;
 
 	public DefaultThreadPool(ThreadPoolConfig.Builder builder) {
-		_threadPool = ObjectPools.newObjectPool(newObjectPoolConfig(builder));
+		_objectPool = ObjectPools.newObjectPool(newObjectPoolConfig(builder));
 	}
 
 	protected ObjectPoolConfig<WorkerThread> newObjectPoolConfig(ThreadPoolConfig.Builder builder) {
@@ -28,7 +27,7 @@ public class DefaultThreadPool implements Closeable, ThreadPool {
 	}
 
 	public DefaultThreadPool(AutoScaleThreadPoolConfig.Builder builder) {
-		_threadPool = ObjectPools.newAutoScaleObjectPool(newAutoScaleObjectPoolConfig(builder));
+		_objectPool = ObjectPools.newAutoScaleObjectPool(newAutoScaleObjectPoolConfig(builder));
 	}
 
 	protected AutoScaleObjectPoolConfig<WorkerThread> newAutoScaleObjectPoolConfig(
@@ -37,7 +36,7 @@ public class DefaultThreadPool implements Closeable, ThreadPool {
 	}
 
 	protected ObjectPool<WorkerThread> getObjectPool() {
-		return _threadPool;
+		return _objectPool;
 	}
 
 	@Override

@@ -18,6 +18,7 @@ public class DefaultThreadPoolConfig extends DefaultObjectPoolConfig<WorkerThrea
 
         private ThreadPool _threadPool;
 
+        @Override
         protected DefaultThreadPoolConfig newPoolConfig() {
             return new DefaultThreadPoolConfig();
         }
@@ -45,7 +46,7 @@ public class DefaultThreadPoolConfig extends DefaultObjectPoolConfig<WorkerThrea
         @Override
         public DefaultThreadPoolConfig build() {
             if (_threadPool == null)
-                throw new IllegalStateException("_threadPool is null");
+                throw new IllegalStateException("threadPool is null");
 
             DefaultThreadPool pool = (DefaultThreadPool) _threadPool;
             setObjectFactory(() -> new WorkerThread(t -> pool.getObjectPool().release(t.getPoolEntry())))
