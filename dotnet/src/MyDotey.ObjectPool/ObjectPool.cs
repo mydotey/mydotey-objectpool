@@ -9,10 +9,8 @@ using System.Collections.Concurrent;
  */
 namespace MyDotey.ObjectPool
 {
-
     public class ObjectPool<T> : IObjectPool<T>
     {
-
         //private static Logger _logger = LoggerFactory.GetLogger(ObjectPool.class);
 
         public virtual IObjectPoolConfig<T> Config { get; }
@@ -20,9 +18,9 @@ namespace MyDotey.ObjectPool
         protected object AddLock { get; }
         protected volatile bool _isDisposed;
 
-        protected ObjectPoolEntry.KeyGenerator _keyGenerator;
+        protected Entry.KeyGenerator _keyGenerator;
         protected BlockingCollection<Object> _availableKeys;
-        protected ConcurrentDictionary<Object, IObjectPoolEntry<T>> _entries;
+        protected ConcurrentDictionary<Object, IEntry<T>> _entries;
 
         protected volatile int _acquiredSize;
 
@@ -40,9 +38,9 @@ namespace MyDotey.ObjectPool
 
         protected virtual void Init()
         {
-            _keyGenerator = new ObjectPoolEntry.KeyGenerator();
+            _keyGenerator = new Entry.KeyGenerator();
             _availableKeys = new BlockingCollection<object>(new ConcurrentStack<object>(), Config.MaxSize);
-            _entries = new ConcurrentDictionary<object, IObjectPoolEntry<T>>(4, Config.MaxSize);
+            _entries = new ConcurrentDictionary<object, IEntry<T>>(4, Config.MaxSize);
 
             TryAddNewEntry(Config.MinSize);
         }
@@ -53,21 +51,21 @@ namespace MyDotey.ObjectPool
                 TryAddNewEntry();
         }
 
-        protected virtual ObjectPoolEntry TryAddNewEntry()
+        protected virtual Entry TryAddNewEntry()
         {
-            ObjectPoolEntry entry = TryCreateNewEntry();
+            Entry entry = TryCreateNewEntry();
             if (entry != null)
                 AddNewEntry(entry);
 
             return entry;
         }
 
-        protected virtual void AddNewEntry(ObjectPoolEntry entry)
+        protected virtual void AddNewEntry(Entry entry)
         {
             _availableKeys.Add(entry.Key);
         }
 
-        protected virtual ObjectPoolEntry TryCreateNewEntry()
+        protected virtual Entry TryCreateNewEntry()
         {
             if (IsDisposed)
                 return null;
@@ -80,21 +78,21 @@ namespace MyDotey.ObjectPool
                 if (Size == Config.MaxSize)
                     return null;
 
-                ObjectPoolEntry entry = NewPoolEntry();
-                entry.Status = ObjectPoolEntry.EntryStatus.AVAILABLE;
+                Entry entry = NewPoolEntry();
+                entry.Status = Entry.EntryStatus.AVAILABLE;
                 _entries.TryAdd(entry.Key, entry);
                 return entry;
             }
         }
 
-        protected virtual ObjectPoolEntry NewPoolEntry()
+        protected virtual Entry NewPoolEntry()
         {
             return NewPoolEntry(_keyGenerator.GenerateKey());
         }
 
-        protected virtual ObjectPoolEntry NewPoolEntry(object key)
+        protected virtual Entry NewPoolEntry(object key)
         {
-            ObjectPoolEntry entry = NewConcretePoolEntry(key, NewObject());
+            Entry entry = NewConcretePoolEntry(key, NewObject());
             try
             {
                 Config.OnCreate(entry);
@@ -107,9 +105,9 @@ namespace MyDotey.ObjectPool
             return entry;
         }
 
-        protected virtual ObjectPoolEntry NewConcretePoolEntry(object key, T obj)
+        protected virtual Entry NewConcretePoolEntry(object key, T obj)
         {
-            return new ObjectPoolEntry(key, obj);
+            return new Entry(key, obj);
         }
 
         protected virtual T NewObject()
@@ -125,10 +123,10 @@ namespace MyDotey.ObjectPool
             return obj;
         }
 
-        protected ObjectPoolEntry GetEntry(object key)
+        protected virtual Entry GetEntry(object key)
         {
-            _entries.TryGetValue(key, out IObjectPoolEntry<T> value);
-            return (ObjectPoolEntry)value;
+            _entries.TryGetValue(key, out IEntry<T> value);
+            return (Entry)value;
         }
 
         public virtual int Size { get { return _entries.Count; } }
@@ -146,11 +144,11 @@ namespace MyDotey.ObjectPool
 
         public virtual bool IsDisposed { get { return _isDisposed; } }
 
-        public virtual IObjectPoolEntry<T> Acquire()
+        public virtual IEntry<T> Acquire()
         {
             CheckDisposed();
 
-            IObjectPoolEntry<T> entry = TryAcquire();
+            IEntry<T> entry = TryAcquire();
             if (entry != null)
                 return entry;
 
@@ -176,7 +174,7 @@ namespace MyDotey.ObjectPool
                 throw new ObjectDisposedException("object pool has been Disposed");
         }
 
-        public virtual IObjectPoolEntry<T> TryAcquire()
+        public virtual IEntry<T> TryAcquire()
         {
             if (IsDisposed)
                 return null;
@@ -188,53 +186,53 @@ namespace MyDotey.ObjectPool
             return TryAddNewEntryAndAcquireOne();
         }
 
-        protected virtual ObjectPoolEntry TryAcquire(object key)
+        protected virtual Entry TryAcquire(object key)
         {
             return DoAcquire(key);
         }
 
-        protected virtual ObjectPoolEntry Acquire(object key)
+        protected virtual Entry Acquire(object key)
         {
             return DoAcquire(key);
         }
 
-        protected virtual ObjectPoolEntry DoAcquire(object key)
+        protected virtual Entry DoAcquire(object key)
         {
-            ObjectPoolEntry entry = GetEntry(key);
+            Entry entry = GetEntry(key);
             return DoAcquire(entry);
         }
 
-        protected virtual ObjectPoolEntry TryAddNewEntryAndAcquireOne()
+        protected virtual Entry TryAddNewEntryAndAcquireOne()
         {
-            ObjectPoolEntry entry = TryCreateNewEntry();
+            Entry entry = TryCreateNewEntry();
             if (entry == null)
                 return null;
 
             return DoAcquire(entry);
         }
 
-        protected virtual ObjectPoolEntry DoAcquire(ObjectPoolEntry entry)
+        protected virtual Entry DoAcquire(Entry entry)
         {
-            entry.Status = ObjectPoolEntry.EntryStatus.ACQUIRED;
+            entry.Status = Entry.EntryStatus.ACQUIRED;
             Interlocked.Increment(ref _acquiredSize);
-            return (ObjectPoolEntry)entry.Clone();
+            return (Entry)entry.Clone();
         }
 
-        public virtual void Release(IObjectPoolEntry<T> entry)
+        public virtual void Release(IEntry<T> entry)
         {
             if (IsDisposed)
                 return;
 
-            ObjectPoolEntry defaultEntry = (ObjectPoolEntry)entry;
-            if (defaultEntry == null || defaultEntry.Status == ObjectPoolEntry.EntryStatus.RELEASED)
+            Entry defaultEntry = (Entry)entry;
+            if (defaultEntry == null || defaultEntry.Status == Entry.EntryStatus.RELEASED)
                 return;
 
             lock (defaultEntry)
             {
-                if (defaultEntry.Status == ObjectPoolEntry.EntryStatus.RELEASED)
+                if (defaultEntry.Status == Entry.EntryStatus.RELEASED)
                     return;
 
-                defaultEntry.Status = ObjectPoolEntry.EntryStatus.RELEASED;
+                defaultEntry.Status = Entry.EntryStatus.RELEASED;
                 Interlocked.Decrement(ref _acquiredSize);
             }
 
@@ -243,7 +241,7 @@ namespace MyDotey.ObjectPool
 
         protected virtual void ReleaseKey(object key)
         {
-            GetEntry(key).Status = ObjectPoolEntry.EntryStatus.AVAILABLE;
+            GetEntry(key).Status = Entry.EntryStatus.AVAILABLE;
             _availableKeys.Add(key);
         }
 
@@ -264,17 +262,17 @@ namespace MyDotey.ObjectPool
 
         protected virtual void DoDispose()
         {
-            foreach (IObjectPoolEntry<T> entry in _entries.Values)
+            foreach (IEntry<T> entry in _entries.Values)
             {
-                Dispose((ObjectPoolEntry)entry);
+                Dispose((Entry)entry);
             }
 
             _availableKeys.Dispose();
         }
 
-        protected void Dispose(ObjectPoolEntry entry)
+        protected void Dispose(Entry entry)
         {
-            entry.Status = ObjectPoolEntry.EntryStatus.CLOSED;
+            entry.Status = Entry.EntryStatus.CLOSED;
 
             try
             {
@@ -286,9 +284,8 @@ namespace MyDotey.ObjectPool
             }
         }
 
-        protected internal class ObjectPoolEntry : IObjectPoolEntry<T>, ICloneable
+        protected internal class Entry : IEntry<T>, ICloneable
         {
-
             public class EntryStatus
             {
                 public const string AVAILABLE = "available";
@@ -303,7 +300,7 @@ namespace MyDotey.ObjectPool
 
             public virtual T Object { get; }
 
-            public ObjectPoolEntry(object key, T obj)
+            public Entry(object key, T obj)
             {
                 Key = key;
                 Object = obj;
@@ -316,7 +313,6 @@ namespace MyDotey.ObjectPool
 
             public class KeyGenerator
             {
-
                 private long _counter;
                 private const long MAX = long.MaxValue / 2;
 
@@ -333,9 +329,7 @@ namespace MyDotey.ObjectPool
 
                     return count;
                 }
-
             }
         }
     }
-
 }

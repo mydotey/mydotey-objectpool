@@ -19,10 +19,15 @@ namespace MyDotey.ObjectPool
 
         bool IsDisposed { get; }
 
-        IObjectPoolEntry<T> Acquire();
+        IEntry<T> Acquire();
 
-        IObjectPoolEntry<T> TryAcquire();
+        IEntry<T> TryAcquire();
 
-        void Release(IObjectPoolEntry<T> entry);
+        void Release(IEntry<T> entry);
+    }
+
+    public interface IEntry<T>
+    {
+        T Object { get; }
     }
 }

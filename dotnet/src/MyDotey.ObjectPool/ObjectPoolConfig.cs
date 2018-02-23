@@ -15,9 +15,9 @@ namespace MyDotey.ObjectPool
 
         public virtual Func<T> ObjectFactory { get; protected set; }
 
-        public virtual Action<IObjectPoolEntry<T>> OnCreate { get; protected set; }
+        public virtual Action<IEntry<T>> OnCreate { get; protected set; }
 
-        public virtual Action<IObjectPoolEntry<T>> OnClose { get; protected set; }
+        public virtual Action<IEntry<T>> OnClose { get; protected set; }
 
         protected ObjectPoolConfig()
         {
@@ -29,21 +29,20 @@ namespace MyDotey.ObjectPool
             return MemberwiseClone();
         }
 
-        protected internal class Builder : AbstractBuilder<IObjectPoolConfigBuilder<T>>
-            , IObjectPoolConfigBuilder<T>
+        protected internal class Builder : AbstractBuilder<IBuilder<T>>, IBuilder<T>
         {
 
         }
 
-        protected internal abstract class AbstractBuilder<B> : IAbstractObjectPoolConfigBuilder<T, B>
-            where B : IAbstractObjectPoolConfigBuilder<T, B>
+        protected internal abstract class AbstractBuilder<B> : IAbstractBuilder<T, B>
+            where B : IAbstractBuilder<T, B>
         {
 
             //private static Logger _logger = LoggerFactory.getLogger\(objectPool.class);
 
-            public static readonly Action<IObjectPoolEntry<T>> DefaultOnCreate = e => { };
+            public static readonly Action<IEntry<T>> DefaultOnCreate = e => { };
 
-            public static readonly Action<IObjectPoolEntry<T>> DefaultOnClose = e =>
+            public static readonly Action<IEntry<T>> DefaultOnClose = e =>
             {
                 if (e.Object is IDisposable)
                 {
@@ -58,7 +57,7 @@ namespace MyDotey.ObjectPool
                 }
             };
 
-            protected ObjectPoolConfig<T> Config { get; }
+            protected virtual ObjectPoolConfig<T> Config { get; }
 
             protected AbstractBuilder()
             {
@@ -67,7 +66,7 @@ namespace MyDotey.ObjectPool
                 Config.OnClose = DefaultOnClose;
             }
 
-            protected ObjectPoolConfig<T> NewPoolConfig()
+            protected virtual ObjectPoolConfig<T> NewPoolConfig()
             {
                 return new ObjectPoolConfig<T>();
             }
@@ -90,13 +89,13 @@ namespace MyDotey.ObjectPool
                 return (B)(object)this;
             }
 
-            public virtual B SetOnCreate(Action<IObjectPoolEntry<T>> onCreate)
+            public virtual B SetOnCreate(Action<IEntry<T>> onCreate)
             {
                 Config.OnCreate = onCreate;
                 return (B)(object)this;
             }
 
-            public virtual B SetOnClose(Action<IObjectPoolEntry<T>> onClose)
+            public virtual B SetOnClose(Action<IEntry<T>> onClose)
             {
                 Config.OnClose = onClose;
                 return (B)(object)this;
@@ -125,9 +124,6 @@ namespace MyDotey.ObjectPool
 
                 return (IObjectPoolConfig<T>)Config.Clone();
             }
-
         }
-
     }
-
 }
