@@ -26,7 +26,7 @@ namespace MyDotey.ObjectPool
 
         protected volatile int _acquiredSize;
 
-        public ObjectPool(ObjectPoolConfig<T> config)
+        public ObjectPool(IObjectPoolConfig<T> config)
         {
             if (config == null)
                 throw new ArgumentNullException("config is null");

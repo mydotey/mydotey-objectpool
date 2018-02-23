@@ -29,13 +29,13 @@ namespace MyDotey.ObjectPool
             return MemberwiseClone();
         }
 
-        protected internal class ObjectPoolConfigBuilder : AbstractObjectPoolConfigBuilder<IObjectPoolConfigBuilder<T>>
+        protected internal class Builder : AbstractBuilder<IObjectPoolConfigBuilder<T>>
             , IObjectPoolConfigBuilder<T>
         {
 
         }
 
-        protected internal abstract class AbstractObjectPoolConfigBuilder<B> : IAbstractObjectPoolConfigBuilder<T, B>
+        protected internal abstract class AbstractBuilder<B> : IAbstractObjectPoolConfigBuilder<T, B>
             where B : IAbstractObjectPoolConfigBuilder<T, B>
         {
 
@@ -60,7 +60,7 @@ namespace MyDotey.ObjectPool
 
             protected ObjectPoolConfig<T> Config { get; }
 
-            protected AbstractObjectPoolConfigBuilder()
+            protected AbstractBuilder()
             {
                 Config = NewPoolConfig();
                 Config.OnCreate = DefaultOnCreate;
