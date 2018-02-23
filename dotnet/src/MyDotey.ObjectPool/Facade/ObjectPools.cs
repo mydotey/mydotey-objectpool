@@ -20,7 +20,7 @@ namespace MyDotey.ObjectPool.Facade
             return new ObjectPool<T>(config);
         }
 
-        public static MyDotey.ObjectPool.AutoScale.IBuilder<T> NewAutoScaleObjectPoolConfigBuilder<T>()
+        public static AutoScale.IBuilder<T> NewAutoScaleObjectPoolConfigBuilder<T>()
         {
             return new AutoScaleObjectPoolConfig<T>.Builder();
         }

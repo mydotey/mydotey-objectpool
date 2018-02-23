@@ -12,7 +12,7 @@ namespace MyDotey.ObjectPool.ThreadPool
     {
         //private static Logger _logger = LoggerFactory.getLogger(WorkerThread.class);
 
-        private Thread _thread;
+        protected internal virtual Thread InnerThread { get; }
 
         private volatile Action _task;
 
@@ -31,8 +31,8 @@ namespace MyDotey.ObjectPool.ThreadPool
 
             _onTaskComplete = onTaskComplete;
 
-            _thread = new Thread(Run);
-            _thread.IsBackground = true;
+            InnerThread = new Thread(Run);
+            InnerThread.IsBackground = true;
         }
 
         public virtual void Run()
@@ -93,7 +93,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 
         protected internal virtual void Start()
         {
-            _thread.Start();
+            InnerThread.Start();
 
             while (!_isStarted)
             {
@@ -107,10 +107,6 @@ namespace MyDotey.ObjectPool.ThreadPool
                     break;
                 }
             }
-        }
-
-        protected internal virtual void Interrupt() {
-            _thread.Interrupt();
         }
     }
 }

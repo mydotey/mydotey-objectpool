@@ -14,26 +14,14 @@ namespace MyDotey.ObjectPool.ThreadPool
 
         public DefaultThreadPool(IBuilder builder)
         {
-            ObjectPool = ObjectPools.NewObjectPool(NewObjectPoolConfig(builder));
+            ObjectPool = NewObjectPool(builder);
         }
 
-        protected virtual ObjectPoolConfig<WorkerThread> NewObjectPoolConfig(IBuilder builder)
+        protected virtual IObjectPool<WorkerThread> NewObjectPool(IBuilder builder)
         {
-            return (ObjectPoolConfig<WorkerThread>)((ThreadPoolConfig.Builder)builder).SetThreadPool(this).Build();
+            ObjectPoolConfig<WorkerThread> config = (ObjectPoolConfig<WorkerThread>)((ThreadPoolConfig.Builder)builder).SetThreadPool(this).Build();
+            return ObjectPools.NewObjectPool(config);
         }
-
-        /*
-            public DefaultThreadPool(AutoScaleThreadPoolConfig.Builder builder)
-            {
-                _threadPool = ObjectPools.newAutoScaleObjectPool(newAutoScaleObjectPoolConfig(builder));
-            }
-
-            protected AutoScaleObjectPoolConfig<WorkerThread> newAutoScaleObjectPoolConfig(
-                    AutoScaleThreadPoolConfig.Builder builder)
-            {
-                return ((DefaultAutoScaleThreadPoolConfig.Builder)builder).setThreadPool(this).build();
-            }
-         */
 
         public virtual int Size { get { return ObjectPool.Size; } }
 

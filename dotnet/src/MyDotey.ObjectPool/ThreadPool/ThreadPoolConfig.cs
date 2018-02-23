@@ -35,7 +35,7 @@ namespace MyDotey.ObjectPool.ThreadPool
                 return (IBuilder)base.SetMaxSize(maxSize);
             }
 
-            protected internal virtual IBuilder SetThreadPool(DefaultThreadPool pool)
+            protected internal virtual IBuilder SetThreadPool(IThreadPool pool)
             {
                 _threadPool = pool;
                 return this;
@@ -48,12 +48,12 @@ namespace MyDotey.ObjectPool.ThreadPool
 
                 DefaultThreadPool pool = (DefaultThreadPool)_threadPool;
                 SetObjectFactory(() => new WorkerThread(t => pool.ObjectPool.Release(t.PoolEntry)))
-                        .SetOnCreate(e =>
-                        {
-                            e.Object.PoolEntry = e;
-                            e.Object.Start();
-                        })
-                        .SetOnClose(e => e.Object.Interrupt());
+                    .SetOnCreate(e =>
+                    {
+                        e.Object.PoolEntry = e;
+                        e.Object.Start();
+                    })
+                    .SetOnClose(e => e.Object.InnerThread.Interrupt());
                 return (IThreadPoolConfig)base.Build();
             }
         }
