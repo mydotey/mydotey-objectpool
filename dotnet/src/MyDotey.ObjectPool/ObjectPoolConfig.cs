@@ -9,12 +9,6 @@ namespace MyDotey.ObjectPool
 {
     public class ObjectPoolConfig<T> : IObjectPoolConfig<T>, ICloneable
     {
-
-        protected ObjectPoolConfig()
-        {
-
-        }
-
         public virtual int MinSize { get; protected set; }
 
         public virtual int MaxSize { get; protected set; }
@@ -25,22 +19,27 @@ namespace MyDotey.ObjectPool
 
         public virtual Action<IObjectPoolEntry<T>> OnClose { get; protected set; }
 
-        public virtual Object Clone()
+        protected ObjectPoolConfig()
+        {
+
+        }
+
+        public virtual object Clone()
         {
             return MemberwiseClone();
         }
 
-        public class ObjectPoolConfigBuilder : AbstractObjectPoolConfigBuilder<IObjectPoolConfigBuilder<T>>
+        protected internal class ObjectPoolConfigBuilder : AbstractObjectPoolConfigBuilder<IObjectPoolConfigBuilder<T>>
             , IObjectPoolConfigBuilder<T>
         {
 
         }
 
-        public abstract class AbstractObjectPoolConfigBuilder<B> : IAbstractObjectPoolConfigBuilder<T, B>
+        protected internal abstract class AbstractObjectPoolConfigBuilder<B> : IAbstractObjectPoolConfigBuilder<T, B>
             where B : IAbstractObjectPoolConfigBuilder<T, B>
         {
 
-            //private static Logger _logger = LoggerFactory.getLogger(ObjectPool.class);
+            //private static Logger _logger = LoggerFactory.getLogger\(objectPool.class);
 
             public static readonly Action<IObjectPoolEntry<T>> DefaultOnCreate = e => { };
 
@@ -59,72 +58,72 @@ namespace MyDotey.ObjectPool
                 }
             };
 
-            protected ObjectPoolConfig<T> _config;
+            protected ObjectPoolConfig<T> Config { get; }
 
             protected AbstractObjectPoolConfigBuilder()
             {
-                _config = newPoolConfig();
-                _config.OnCreate = DefaultOnCreate;
-                _config.OnClose = DefaultOnClose;
+                Config = NewPoolConfig();
+                Config.OnCreate = DefaultOnCreate;
+                Config.OnClose = DefaultOnClose;
             }
 
-            protected ObjectPoolConfig<T> newPoolConfig()
+            protected ObjectPoolConfig<T> NewPoolConfig()
             {
                 return new ObjectPoolConfig<T>();
             }
 
             public virtual B SetMinSize(int minSize)
             {
-                _config.MinSize = minSize;
-                return (B)(Object)this;
+                Config.MinSize = minSize;
+                return (B)(object)this;
             }
 
             public virtual B SetMaxSize(int maxSize)
             {
-                _config.MaxSize = maxSize;
-                return (B)(Object)this;
+                Config.MaxSize = maxSize;
+                return (B)(object)this;
             }
 
             public virtual B SetObjectFactory(Func<T> objectFactory)
             {
-                _config.ObjectFactory = objectFactory;
-                return (B)(Object)this;
+                Config.ObjectFactory = objectFactory;
+                return (B)(object)this;
             }
 
             public virtual B SetOnCreate(Action<IObjectPoolEntry<T>> onCreate)
             {
-                _config.OnCreate = onCreate;
-                return (B)(Object)this;
+                Config.OnCreate = onCreate;
+                return (B)(object)this;
             }
 
             public virtual B SetOnClose(Action<IObjectPoolEntry<T>> onClose)
             {
-                _config.OnClose = onClose;
-                return (B)(Object)this;
+                Config.OnClose = onClose;
+                return (B)(object)this;
             }
 
             public virtual IObjectPoolConfig<T> Build()
             {
-                if (_config.MinSize < 0)
-                    throw new ArgumentException("minSize is invalid: " + _config.MinSize);
+                if (Config.MinSize < 0)
+                    throw new ArgumentException("minSize is invalid: " + Config.MinSize);
 
-                if (_config.MaxSize <= 0)
-                    throw new ArgumentException("maxSize is invalid: " + _config.MaxSize);
+                if (Config.MaxSize <= 0)
+                    throw new ArgumentException("maxSize is invalid: " + Config.MaxSize);
 
-                if (_config.MinSize > _config.MaxSize)
-                    throw new ArgumentException("minSize is larger than maxSiz. minSize: " + _config.MinSize
-                            + ", maxSize: " + _config.MaxSize);
+                if (Config.MinSize > Config.MaxSize)
+                    throw new ArgumentException("minSize is larger than maxSiz. minSize: " + Config.MinSize
+                            + ", maxSize: " + Config.MaxSize);
 
-                if (_config.ObjectFactory == null)
+                if (Config.ObjectFactory == null)
                     throw new ArgumentNullException("objectFactory is not set");
 
-                if (_config.OnCreate == null)
+                if (Config.OnCreate == null)
                     throw new ArgumentNullException("onCreate is null");
 
-                if (_config.OnClose == null)
+                if (Config.OnClose == null)
                     throw new ArgumentNullException("onClose is null");
 
-                return (IObjectPoolConfig<T>)_config.Clone();
+                return (IObjectPoolConfig<T>)Config.Clone();
             }
 
         }
