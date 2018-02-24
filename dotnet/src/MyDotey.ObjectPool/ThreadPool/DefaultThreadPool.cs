@@ -51,7 +51,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 
         public virtual int Size { get { return ObjectPool.Size; } }
 
-        public virtual int QueueSize { get { return TaskQueue.Count; } }
+        public virtual int QueueSize { get { return HasQueue ? TaskQueue.Count : 0; } }
 
         public virtual void Submit(Action task)
         {
