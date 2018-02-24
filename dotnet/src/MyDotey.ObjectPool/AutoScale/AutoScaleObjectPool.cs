@@ -250,7 +250,7 @@ namespace MyDotey.ObjectPool.AutoScale
             }
             catch (Exception e)
             {
-                String errorMessage = String.Format("failed to refresh object: {0}, still use it", entry.Object);
+                //String errorMessage = String.Format("failed to refresh object: {0}, still use it", entry.Object);
                 //_logger.error(errorMessage, e);
                 return false;
             }

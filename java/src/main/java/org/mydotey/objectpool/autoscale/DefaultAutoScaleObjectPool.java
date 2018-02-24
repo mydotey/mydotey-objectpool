@@ -249,7 +249,7 @@ public class DefaultAutoScaleObjectPool<T> extends DefaultObjectPool<T> implemen
         try {
             _taskScheduler.shutdown();
         } catch (Exception e) {
-            _logger.error("shutdown thread pool failed.", e);
+            _logger.error("shutdown task scheduler failed.", e);
         }
     }
 
