@@ -110,7 +110,7 @@ public class AutoScaleObjectPoolTest extends ObjectPoolTest {
         int taskCount = 200;
         long taskSleep = 2000;
         long viInitDelay = _defaultViInitDelay;
-        int sizeAfterSubmit = _defaultSizeAfterSumit;
+        int sizeAfterSubmit = _defaultSizeAfterSubmit;
         long finishSleep = 10000;
         int finalSize = _minSize;
         threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
@@ -122,7 +122,7 @@ public class AutoScaleObjectPoolTest extends ObjectPoolTest {
         int taskCount = 200;
         long taskSleep = 2000;
         long viInitDelay = _defaultViInitDelay;
-        int sizeAfterSubmit = _defaultSizeAfterSumit;
+        int sizeAfterSubmit = _defaultSizeAfterSubmit;
         long finishSleep = 10000;
         int finalSize = _minSize;
         threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,

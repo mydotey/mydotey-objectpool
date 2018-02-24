@@ -31,7 +31,7 @@ public class ObjectPoolTest {
     protected int _defaultTaskCount = _minSize;
     protected long _defaultTaskSleep = 0;
     protected long _defaultViInitDelay = 1000;
-    protected int _defaultSizeAfterSumit = -1;
+    protected int _defaultSizeAfterSubmit = -1;
     protected long _defaultFinishSleep = 0;
     protected int _defaultFinalSize = -1;
 
@@ -79,7 +79,7 @@ public class ObjectPoolTest {
         int taskCount = 50;
         long taskSleep = 50;
         long viInitDelay = _defaultViInitDelay;
-        int sizeAfterSubmit = _defaultSizeAfterSumit;
+        int sizeAfterSubmit = _defaultSizeAfterSubmit;
         long finishSleep = 1000;
         int finalSize = _defaultFinalSize;
         threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
@@ -139,7 +139,7 @@ public class ObjectPoolTest {
         int taskCount = 200;
         long taskSleep = 2000;
         long viInitDelay = _defaultViInitDelay;
-        int sizeAfterSubmit = _defaultSizeAfterSumit;
+        int sizeAfterSubmit = _defaultSizeAfterSubmit;
         long finishSleep = 5000;
         int finalSize = _maxSize;
         threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
@@ -151,7 +151,7 @@ public class ObjectPoolTest {
         int taskCount = 200;
         long taskSleep = 2000;
         long viInitDelay = _defaultViInitDelay;
-        int sizeAfterSubmit = _defaultSizeAfterSumit;
+        int sizeAfterSubmit = _defaultSizeAfterSubmit;
         long finishSleep = 5000;
         int finalSize = _maxSize;
         threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
