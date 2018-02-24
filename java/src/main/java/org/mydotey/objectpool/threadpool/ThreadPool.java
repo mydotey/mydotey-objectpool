@@ -9,7 +9,11 @@ import java.io.Closeable;
  */
 public interface ThreadPool extends Closeable {
 
+    ThreadPoolConfig getConfig();
+
     int getSize();
+
+    int getQueueSize();
 
     void submit(Runnable task) throws InterruptedException;
 

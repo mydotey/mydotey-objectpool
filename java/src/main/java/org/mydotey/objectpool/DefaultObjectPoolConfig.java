@@ -133,23 +133,23 @@ public class DefaultObjectPoolConfig<T> implements ObjectPoolConfig<T>, Cloneabl
         @Override
         public ObjectPoolConfig<T> build() {
             if (_config._minSize < 0)
-                throw new IllegalStateException("minSize is invalid: " + _config._minSize);
+                throw new IllegalArgumentException("minSize is invalid: " + _config._minSize);
 
             if (_config._maxSize <= 0)
-                throw new IllegalStateException("maxSize is invalid: " + _config._maxSize);
+                throw new IllegalArgumentException("maxSize is invalid: " + _config._maxSize);
 
             if (_config._minSize > _config._maxSize)
-                throw new IllegalStateException("minSize is larger than maxSiz. minSize: " + _config._minSize
+                throw new IllegalArgumentException("minSize is larger than maxSiz. minSize: " + _config._minSize
                         + ", maxSize: " + _config._maxSize);
 
             if (_config._objectFactory == null)
-                throw new IllegalStateException("objectFactory is not set");
+                throw new IllegalArgumentException("objectFactory is not set");
 
             if (_config._onCreate == null)
-                throw new IllegalStateException("onCreate is null");
+                throw new IllegalArgumentException("onCreate is null");
 
             if (_config._onClose == null)
-                throw new IllegalStateException("onClose is null");
+                throw new IllegalArgumentException("onClose is null");
 
             return _config.clone();
         }

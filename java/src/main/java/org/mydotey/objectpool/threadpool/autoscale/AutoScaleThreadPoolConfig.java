@@ -23,6 +23,9 @@ public interface AutoScaleThreadPoolConfig extends ThreadPoolConfig {
         @Override
         Builder setMaxSize(int maxSize);
 
+        @Override
+        Builder setQueueCapacity(int queueCapacity);
+
         Builder setMaxIdleTime(long maxIdleTime);
 
         Builder setScaleFactor(int scaleFactor);

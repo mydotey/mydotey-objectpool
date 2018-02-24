@@ -111,22 +111,22 @@ public class DefaultAutoScaleObjectPoolConfig<T> extends DefaultObjectPoolConfig
         @Override
         public AutoScaleObjectPoolConfig<T> build() {
             if (getPoolConfig()._objectTtl <= 0)
-                throw new IllegalStateException("objectTtl is invalid: " + getPoolConfig()._objectTtl);
+                throw new IllegalArgumentException("objectTtl is invalid: " + getPoolConfig()._objectTtl);
 
             if (getPoolConfig()._maxIdleTime <= 0)
-                throw new IllegalStateException("maxIdleTime is invalid: " + getPoolConfig()._maxIdleTime);
+                throw new IllegalArgumentException("maxIdleTime is invalid: " + getPoolConfig()._maxIdleTime);
 
             if (getPoolConfig()._staleChecker == null)
-                throw new IllegalStateException("staleChecker is null.");
+                throw new IllegalArgumentException("staleChecker is null.");
 
             if (getPoolConfig()._checkInterval <= 0)
-                throw new IllegalStateException("checkInterval is invalid: " + getPoolConfig()._checkInterval);
+                throw new IllegalArgumentException("checkInterval is invalid: " + getPoolConfig()._checkInterval);
 
             if (getPoolConfig()._scaleFactor <= 0)
-                throw new IllegalStateException("invalid scaleFactor: " + getPoolConfig()._scaleFactor);
+                throw new IllegalArgumentException("invalid scaleFactor: " + getPoolConfig()._scaleFactor);
 
             if (getPoolConfig()._scaleFactor - 1 > getPoolConfig().getMaxSize() - getPoolConfig().getMinSize())
-                throw new IllegalStateException("too large scaleFactor: " + getPoolConfig()._scaleFactor);
+                throw new IllegalArgumentException("too large scaleFactor: " + getPoolConfig()._scaleFactor);
 
             return (DefaultAutoScaleObjectPoolConfig<T>) super.build();
         }

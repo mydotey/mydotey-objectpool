@@ -27,10 +27,10 @@ namespace MyDotey.ObjectPool.ThreadPool
             Config = NewConfig(builder);
             ObjectPool = NewObjectPool();
 
-            HasQueue = Config.QueueSize > 0;
+            HasQueue = Config.QueueCapacity > 0;
             if (HasQueue)
             {
-                TaskQueue = new BlockingCollection<Action>(new ConcurrentQueue<Action>(), Config.QueueSize);
+                TaskQueue = new BlockingCollection<Action>(new ConcurrentQueue<Action>(), Config.QueueCapacity);
                 TaskConsumer = new Thread(ConsumeTask)
                 {
                     IsBackground = true

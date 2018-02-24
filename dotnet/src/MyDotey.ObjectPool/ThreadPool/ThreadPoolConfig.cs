@@ -9,7 +9,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 {
     public class ThreadPoolConfig : ObjectPoolConfig<WorkerThread>, IThreadPoolConfig
     {
-        public virtual int QueueSize { get; protected set; }
+        public virtual int QueueCapacity { get; protected set; }
 
         protected internal ThreadPoolConfig()
         {
@@ -22,7 +22,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 
             public Builder()
             {
-                SetQueueSize(int.MaxValue);
+                SetQueueCapacity(int.MaxValue);
             }
 
             protected override ObjectPoolConfig<WorkerThread> NewPoolConfig()
@@ -42,9 +42,9 @@ namespace MyDotey.ObjectPool.ThreadPool
                 return (IBuilder)base.SetMaxSize(maxSize);
             }
 
-            public virtual IBuilder SetQueueSize(int queueSize)
+            public virtual IBuilder SetQueueCapacity(int queueCapacity)
             {
-                Config.QueueSize = queueSize;
+                Config.QueueCapacity = queueCapacity;
                 return this;
             }
 
@@ -56,8 +56,8 @@ namespace MyDotey.ObjectPool.ThreadPool
 
             public new virtual IThreadPoolConfig Build()
             {
-                if (Config.QueueSize < 0)
-                    throw new ArgumentException("queueSize is less than 0");
+                if (Config.QueueCapacity < 0)
+                    throw new ArgumentException("queueCapacity is less than 0");
 
                 if (_threadPool == null)
                     throw new ArgumentNullException("threadPool is null");

@@ -12,14 +12,25 @@ import org.mydotey.objectpool.threadpool.WorkerThread;
 public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPoolConfig<WorkerThread>
         implements AutoScaleThreadPoolConfig {
 
+    protected int _queueCapacity;
+
     protected DefaultAutoScaleThreadPoolConfig() {
 
+    }
+
+    @Override
+    public int getQueueCapacity() {
+        return _queueCapacity;
     }
 
     public static class Builder extends DefaultAutoScaleObjectPoolConfig.Builder<WorkerThread>
             implements AutoScaleThreadPoolConfig.Builder {
 
         private ThreadPool _threadPool;
+
+        public Builder() {
+            setQueueCapacity(Integer.MAX_VALUE);
+        }
 
         @Override
         protected DefaultAutoScaleThreadPoolConfig newPoolConfig() {
@@ -39,6 +50,12 @@ public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPool
         @Override
         public Builder setMaxSize(int maxSize) {
             return (Builder) super.setMaxSize(maxSize);
+        }
+
+        @Override
+        public Builder setQueueCapacity(int queueCapacity) {
+            getPoolConfig()._queueCapacity = queueCapacity;
+            return this;
         }
 
         @Override
@@ -63,8 +80,11 @@ public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPool
 
         @Override
         public DefaultAutoScaleThreadPoolConfig build() {
+            if (getPoolConfig()._queueCapacity < 0)
+                throw new IllegalArgumentException("queueCapacity is less than 0");
+
             if (_threadPool == null)
-                throw new IllegalStateException("threadPool is null");
+                throw new IllegalArgumentException("threadPool is null");
 
             DefaultAutoScaleThreadPool pool = (DefaultAutoScaleThreadPool) _threadPool;
             setObjectFactory(() -> new WorkerThread(t -> pool.getObjectPool().release(t.getPoolEntry())))

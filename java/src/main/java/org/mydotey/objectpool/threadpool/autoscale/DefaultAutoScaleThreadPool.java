@@ -15,17 +15,26 @@ import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPoolCon
  *
  *         Feb 6, 2018
  */
-public class DefaultAutoScaleThreadPool extends DefaultThreadPool {
+public class DefaultAutoScaleThreadPool extends DefaultThreadPool implements AutoScaleThreadPool {
 
     public DefaultAutoScaleThreadPool(AutoScaleThreadPoolConfig.Builder builder) {
         super(builder);
     }
 
     @Override
-    protected AutoScaleObjectPool<WorkerThread> newObjectPool(ThreadPoolConfig.Builder builder) {
-        AutoScaleObjectPoolConfig<WorkerThread> config = ((DefaultAutoScaleThreadPoolConfig.Builder) builder)
-                .setThreadPool(this).build();
-        return ObjectPools.newAutoScaleObjectPool(config);
+    public AutoScaleThreadPoolConfig getConfig() {
+        return (AutoScaleThreadPoolConfig) super.getConfig();
+    }
+
+    @Override
+    protected ThreadPoolConfig newConfig(ThreadPoolConfig.Builder builder) {
+        return ((DefaultAutoScaleThreadPoolConfig.Builder) builder).setThreadPool(this).build();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected AutoScaleObjectPool<WorkerThread> newObjectPool() {
+        return ObjectPools.newAutoScaleObjectPool((AutoScaleObjectPoolConfig<WorkerThread>) getConfig());
     }
 
     @Override

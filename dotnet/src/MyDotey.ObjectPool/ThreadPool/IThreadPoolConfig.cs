@@ -13,7 +13,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 
         int MaxSize { get; }
 
-        int QueueSize { get; }
+        int QueueCapacity { get; }
     }
 
     public interface IBuilder
@@ -22,7 +22,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 
         IBuilder SetMaxSize(int maxSize);
 
-        IBuilder SetQueueSize(int queueSize);
+        IBuilder SetQueueCapacity(int queueCapacity);
 
         IThreadPoolConfig Build();
     }

@@ -4,6 +4,7 @@ import org.mydotey.objectpool.threadpool.DefaultThreadPool;
 import org.mydotey.objectpool.threadpool.DefaultThreadPoolConfig;
 import org.mydotey.objectpool.threadpool.ThreadPool;
 import org.mydotey.objectpool.threadpool.ThreadPoolConfig;
+import org.mydotey.objectpool.threadpool.autoscale.AutoScaleThreadPool;
 import org.mydotey.objectpool.threadpool.autoscale.AutoScaleThreadPoolConfig;
 import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPool;
 import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPoolConfig;
@@ -27,7 +28,7 @@ public class ThreadPools {
         return new DefaultAutoScaleThreadPoolConfig.Builder();
     }
 
-    public static ThreadPool newAutoScaleThreadPool(AutoScaleThreadPoolConfig.Builder builder) {
+    public static AutoScaleThreadPool newAutoScaleThreadPool(AutoScaleThreadPoolConfig.Builder builder) {
         return new DefaultAutoScaleThreadPool(builder);
     }
 

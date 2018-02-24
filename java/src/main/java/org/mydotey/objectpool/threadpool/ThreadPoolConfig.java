@@ -11,11 +11,15 @@ public interface ThreadPoolConfig {
 
     int getMaxSize();
 
+    int getQueueCapacity();
+
     interface Builder {
 
         Builder setMinSize(int minSize);
 
         Builder setMaxSize(int maxSize);
+
+        Builder setQueueCapacity(int queueCapacity);
 
         ThreadPoolConfig build();
     }

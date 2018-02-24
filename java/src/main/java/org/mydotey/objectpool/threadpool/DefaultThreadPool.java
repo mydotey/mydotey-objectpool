@@ -2,6 +2,8 @@ package org.mydotey.objectpool.threadpool;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.mydotey.objectpool.ObjectPool;
 import org.mydotey.objectpool.ObjectPoolConfig;
@@ -15,19 +17,42 @@ import org.mydotey.objectpool.facade.ObjectPools;
  */
 public class DefaultThreadPool implements ThreadPool {
 
-    private ObjectPool<WorkerThread> _objectPool;
+    protected ThreadPoolConfig _config;
+    protected ObjectPool<WorkerThread> _objectPool;
+
+    protected boolean _hasQueue;
+    protected BlockingQueue<Runnable> _taskQueue;
+    protected Thread _taskConsumer;
 
     public DefaultThreadPool(ThreadPoolConfig.Builder builder) {
-        _objectPool = newObjectPool(builder);
+        _config = newConfig(builder);
+        _objectPool = newObjectPool();
+
+        _hasQueue = _config.getQueueCapacity() > 0;
+        if (_hasQueue) {
+            _taskQueue = new LinkedBlockingQueue<>(_config.getQueueCapacity());
+            _taskConsumer = new Thread(() -> consumeTask());
+            _taskConsumer.setDaemon(true);
+            _taskConsumer.start();
+        }
     }
 
-    protected ObjectPool<WorkerThread> newObjectPool(ThreadPoolConfig.Builder builder) {
-        ObjectPoolConfig<WorkerThread> config = ((DefaultThreadPoolConfig.Builder) builder).setThreadPool(this).build();
-        return ObjectPools.newObjectPool(config);
+    protected ThreadPoolConfig newConfig(ThreadPoolConfig.Builder builder) {
+        return ((DefaultThreadPoolConfig.Builder) builder).setThreadPool(this).build();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected ObjectPool<WorkerThread> newObjectPool() {
+        return ObjectPools.newObjectPool((ObjectPoolConfig<WorkerThread>) _config);
     }
 
     protected ObjectPool<WorkerThread> getObjectPool() {
         return _objectPool;
+    }
+
+    @Override
+    public ThreadPoolConfig getConfig() {
+        return _config;
     }
 
     @Override
@@ -36,8 +61,18 @@ public class DefaultThreadPool implements ThreadPool {
     }
 
     @Override
+    public int getQueueSize() {
+        return _hasQueue ? _taskQueue.size() : 0;
+    }
+
+    @Override
     public void submit(Runnable task) throws InterruptedException {
         Objects.requireNonNull(task, "task is null");
+
+        if (_hasQueue) {
+            _taskQueue.put(task);
+            return;
+        }
 
         Entry<WorkerThread> entry = getObjectPool().acquire();
         entry.getObject().setTask(task);
@@ -55,8 +90,23 @@ public class DefaultThreadPool implements ThreadPool {
         return true;
     }
 
+    protected void consumeTask() {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                Runnable task = _taskQueue.take();
+                Entry<WorkerThread> entry = getObjectPool().acquire();
+                entry.getObject().setTask(task);
+            } catch (Exception e) {
+                break;
+            }
+        }
+    }
+
     @Override
     public void close() throws IOException {
         getObjectPool().close();
+
+        if (_hasQueue)
+            _taskConsumer.interrupt();
     }
 }
