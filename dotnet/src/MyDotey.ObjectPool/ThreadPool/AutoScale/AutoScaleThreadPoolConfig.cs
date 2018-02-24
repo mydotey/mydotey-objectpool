@@ -11,6 +11,8 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
 {
     public class AutoScaleThreadPoolConfig : AutoScaleObjectPoolConfig<WorkerThread>, IAutoScaleThreadPoolConfig
     {
+        public virtual int QueueSize { get; protected set; }
+
         protected internal AutoScaleThreadPoolConfig()
         {
 
@@ -19,6 +21,11 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
         protected internal new class Builder : AutoScaleObjectPoolConfig<WorkerThread>.Builder, IBuilder
         {
             private IThreadPool _threadPool;
+
+            public Builder()
+            {
+                SetQueueSize(int.MaxValue);
+            }
 
             protected override ObjectPoolConfig<WorkerThread> NewPoolConfig()
             {
@@ -45,6 +52,17 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
             public new virtual IBuilder SetMaxSize(int maxSize)
             {
                 return (IBuilder)base.SetMaxSize(maxSize);
+            }
+
+            ThreadPool.IBuilder ThreadPool.IBuilder.SetQueueSize(int queueSize)
+            {
+                return SetQueueSize(queueSize);
+            }
+
+            public virtual IBuilder SetQueueSize(int queueSize)
+            {
+                Config.QueueSize = queueSize;
+                return this;
             }
 
             public new virtual IBuilder SetMaxIdleTime(long maxIdleTime)
@@ -75,6 +93,9 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
 
             public new virtual IAutoScaleThreadPoolConfig Build()
             {
+                if (Config.QueueSize < 0)
+                    throw new ArgumentException("queueSize is less than 0");
+
                 if (_threadPool == null)
                     throw new ArgumentNullException("threadPool is null");
 

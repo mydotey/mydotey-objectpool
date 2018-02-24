@@ -26,7 +26,7 @@ namespace MyDotey.ObjectPool.Facade
             return new AutoScaleThreadPoolConfig.Builder();
         }
 
-        public static IThreadPool NewAutoScaleThreadPool(ThreadPool.AutoScale.IBuilder builder)
+        public static IAutoScaleThreadPool NewAutoScaleThreadPool(ThreadPool.AutoScale.IBuilder builder)
         {
             return new AutoScaleThreadPool(builder);
         }

@@ -60,7 +60,7 @@ namespace MyDotey.ObjectPool.AutoScale
             };
 
             ThreadPool.IBuilder builder = ThreadPools.NewThreadPoolConfigBuilder();
-            builder.SetMinSize(1).SetMaxSize(1);
+            builder.SetMinSize(1).SetMaxSize(1).SetQueueSize(Config.MaxSize);
             _threadPool = ThreadPools.NewThreadPool(builder);
         }
 

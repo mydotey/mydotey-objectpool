@@ -9,18 +9,23 @@ using MyDotey.ObjectPool.Facade;
  */
 namespace MyDotey.ObjectPool.ThreadPool.AutoScale
 {
-    public class AutoScaleThreadPool : DefaultThreadPool
+    public class AutoScaleThreadPool : DefaultThreadPool, IAutoScaleThreadPool
     {
         public AutoScaleThreadPool(IBuilder builder)
             : base(builder)
         {
         }
 
-        protected override IObjectPool<WorkerThread> NewObjectPool(ThreadPool.IBuilder builder)
+        public new virtual IAutoScaleThreadPoolConfig Config { get { return (IAutoScaleThreadPoolConfig)base.Config; } }
+
+        protected override IThreadPoolConfig NewConfig(ThreadPool.IBuilder builder)
         {
-            AutoScaleObjectPoolConfig<WorkerThread> config =
-                (AutoScaleObjectPoolConfig<WorkerThread>)((AutoScaleThreadPoolConfig.Builder)builder).SetThreadPool(this).Build();
-            return ObjectPools.NewAutoScaleObjectPool(config);
+            return ((AutoScaleThreadPoolConfig.Builder)builder).SetThreadPool(this).Build();
+        }
+
+        protected override IObjectPool<WorkerThread> NewObjectPool()
+        {
+            return ObjectPools.NewAutoScaleObjectPool((AutoScaleObjectPoolConfig<WorkerThread>)Config);
         }
     }
 }
