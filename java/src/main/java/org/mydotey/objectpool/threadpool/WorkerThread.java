@@ -90,6 +90,7 @@ public class WorkerThread extends Thread {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
+                interrupt();
                 _logger.info("thread {} interrupted when starting", this);
                 break;
             }

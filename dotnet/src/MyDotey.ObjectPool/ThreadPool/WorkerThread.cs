@@ -104,6 +104,7 @@ namespace MyDotey.ObjectPool.ThreadPool
                 catch (ThreadInterruptedException e)
                 {
                     //_logger.info("thread {} interrupted when starting", this);
+                    InnerThread.Interrupt();
                     break;
                 }
             }
