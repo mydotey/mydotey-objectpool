@@ -134,7 +134,7 @@ namespace MyDotey.ObjectPool.AutoScale
                 }
                 else
                 {
-                    entry.Status = AutoScaleEntry.EntryStatus.PENDING_REFRESH;
+                    entry.Status = AutoScaleEntry.EntryStatus.PendingRefresh;
                 }
             }
 
@@ -152,7 +152,7 @@ namespace MyDotey.ObjectPool.AutoScale
             lock (key)
             {
                 AutoScaleEntry entry = GetEntry(key);
-                if (entry.Status == AutoScaleEntry.EntryStatus.PENDING_REFRESH)
+                if (entry.Status == AutoScaleEntry.EntryStatus.PendingRefresh)
                 {
                     if (!TryRefresh(entry))
                     {
@@ -200,7 +200,7 @@ namespace MyDotey.ObjectPool.AutoScale
             lock (AddLock)
             {
                 _entries.TryRemove(entry.Key, out IEntry<T> value);
-                Dispose(entry);
+                Close(entry);
                 //_logger.info("scaled in an object: {}", entry.Object);
             }
         }
@@ -217,10 +217,10 @@ namespace MyDotey.ObjectPool.AutoScale
                 if (!NeedRefresh(entry))
                     return false;
 
-                if (entry.Status == AutoScaleEntry.EntryStatus.AVAILABLE)
+                if (entry.Status == AutoScaleEntry.EntryStatus.Available)
                     return TryRefresh(entry);
 
-                entry.Status = AutoScaleEntry.EntryStatus.PENDING_REFRESH;
+                entry.Status = AutoScaleEntry.EntryStatus.PendingRefresh;
                 return false;
             }
         }
@@ -239,7 +239,7 @@ namespace MyDotey.ObjectPool.AutoScale
                 return false;
             }
 
-            Dispose(entry);
+            Close(entry);
             _entries.TryAdd(entry.Key, newEntry);
 
             //_logger.info("refreshed an object, old: {0}, new: {1}", entry.Object, newEntry.Object);
@@ -271,14 +271,14 @@ namespace MyDotey.ObjectPool.AutoScale
 
         protected virtual bool NeedScaleIn(AutoScaleEntry entry)
         {
-            return entry.Status == AutoScaleEntry.EntryStatus.AVAILABLE
+            return entry.Status == AutoScaleEntry.EntryStatus.Available
                     && entry.LastUsedTime <= CurrentTimeMillis - Config.MaxIdleTime
                     && Size > Config.MinSize;
         }
 
-        protected override void DoDispose()
+        protected override void DoClose()
         {
-            base.DoDispose();
+            base.DoClose();
 
             try
             {
@@ -307,7 +307,7 @@ namespace MyDotey.ObjectPool.AutoScale
         {
             public new class EntryStatus : ObjectPool<T>.Entry.EntryStatus
             {
-                public const String PENDING_REFRESH = "pending_refresh";
+                public const String PendingRefresh = "pending_refresh";
             }
 
             public virtual long CreationTime { get; }

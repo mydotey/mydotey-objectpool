@@ -80,7 +80,7 @@ namespace MyDotey.ObjectPool
                     return null;
 
                 Entry entry = NewPoolEntry();
-                entry.Status = Entry.EntryStatus.AVAILABLE;
+                entry.Status = Entry.EntryStatus.Available;
                 _entries.TryAdd(entry.Key, entry);
                 return entry;
             }
@@ -145,7 +145,7 @@ namespace MyDotey.ObjectPool
 
         public virtual IEntry<T> Acquire()
         {
-            CheckDisposed();
+            CheckClosed();
 
             IEntry<T> entry = TryAcquire();
             if (entry != null)
@@ -159,7 +159,7 @@ namespace MyDotey.ObjectPool
         {
             while (true)
             {
-                CheckDisposed();
+                CheckClosed();
 
                 _availableKeys.TryTake(out object key, 1 * 1000);
                 if (key != null)
@@ -167,10 +167,10 @@ namespace MyDotey.ObjectPool
             }
         }
 
-        protected virtual void CheckDisposed()
+        protected virtual void CheckClosed()
         {
             if (IsClosed)
-                throw new ObjectDisposedException("object pool has been Disposed");
+                throw new ObjectDisposedException("object pool has been closed");
         }
 
         public virtual IEntry<T> TryAcquire()
@@ -212,7 +212,7 @@ namespace MyDotey.ObjectPool
 
         protected virtual Entry DoAcquire(Entry entry)
         {
-            entry.Status = Entry.EntryStatus.ACQUIRED;
+            entry.Status = Entry.EntryStatus.Acquired;
             Interlocked.Increment(ref _acquiredSize);
             return (Entry)entry.Clone();
         }
@@ -223,15 +223,15 @@ namespace MyDotey.ObjectPool
                 return;
 
             Entry defaultEntry = (Entry)entry;
-            if (defaultEntry == null || defaultEntry.Status == Entry.EntryStatus.RELEASED)
+            if (defaultEntry == null || defaultEntry.Status == Entry.EntryStatus.Released)
                 return;
 
             lock (defaultEntry)
             {
-                if (defaultEntry.Status == Entry.EntryStatus.RELEASED)
+                if (defaultEntry.Status == Entry.EntryStatus.Released)
                     return;
 
-                defaultEntry.Status = Entry.EntryStatus.RELEASED;
+                defaultEntry.Status = Entry.EntryStatus.Released;
                 Interlocked.Decrement(ref _acquiredSize);
             }
 
@@ -240,7 +240,7 @@ namespace MyDotey.ObjectPool
 
         protected virtual void ReleaseKey(object key)
         {
-            GetEntry(key).Status = Entry.EntryStatus.AVAILABLE;
+            GetEntry(key).Status = Entry.EntryStatus.Available;
             _availableKeys.Add(key);
         }
 
@@ -255,23 +255,23 @@ namespace MyDotey.ObjectPool
                     return;
 
                 IsClosed = true;
-                DoDispose();
+                DoClose();
             }
         }
 
-        protected virtual void DoDispose()
+        protected virtual void DoClose()
         {
             foreach (IEntry<T> entry in _entries.Values)
             {
-                Dispose((Entry)entry);
+                Close((Entry)entry);
             }
 
             _availableKeys.Dispose();
         }
 
-        protected void Dispose(Entry entry)
+        protected void Close(Entry entry)
         {
-            entry.Status = Entry.EntryStatus.CLOSED;
+            entry.Status = Entry.EntryStatus.Closed;
 
             try
             {
@@ -287,10 +287,10 @@ namespace MyDotey.ObjectPool
         {
             public class EntryStatus
             {
-                public const string AVAILABLE = "available";
-                public const string ACQUIRED = "acquired";
-                public const string RELEASED = "released";
-                public const string CLOSED = "disposed";
+                public const string Available = "available";
+                public const string Acquired = "acquired";
+                public const string Released = "released";
+                public const string Closed = "closed";
             }
 
             public virtual object Key { get; }

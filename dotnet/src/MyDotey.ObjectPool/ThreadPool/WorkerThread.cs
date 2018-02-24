@@ -63,7 +63,7 @@ namespace MyDotey.ObjectPool.ThreadPool
                     {
                         Monitor.Wait(_lock);
                     }
-                    catch (ThreadInterruptedException e)
+                    catch (Exception e)
                     {
                         break;
                     }
