@@ -16,9 +16,9 @@ namespace MyDotey.ObjectPool.Facade
             return new ThreadPoolConfig.Builder();
         }
 
-        public static IThreadPool NewThreadPool(ThreadPool.IBuilder builder)
+        public static IThreadPool NewThreadPool(IThreadPoolConfig config)
         {
-            return new DefaultThreadPool(builder);
+            return new DefaultThreadPool(config);
         }
 
         public static ThreadPool.AutoScale.IBuilder NewAutoScaleThreadPoolConfigBuilder()
@@ -26,9 +26,9 @@ namespace MyDotey.ObjectPool.Facade
             return new AutoScaleThreadPoolConfig.Builder();
         }
 
-        public static IAutoScaleThreadPool NewAutoScaleThreadPool(ThreadPool.AutoScale.IBuilder builder)
+        public static IAutoScaleThreadPool NewAutoScaleThreadPool(IAutoScaleThreadPoolConfig config)
         {
-            return new AutoScaleThreadPool(builder);
+            return new AutoScaleThreadPool(config);
         }
     }
 }

@@ -12,19 +12,19 @@ namespace MyDotey.ObjectPool.ThreadPool
 {
     public class DefaultThreadPool : IThreadPool
     {
-        public virtual IThreadPoolConfig Config { get; protected set; }
+        public virtual IThreadPoolConfig Config { get; }
         protected internal virtual IObjectPool<WorkerThread> ObjectPool { get; }
 
         protected virtual bool HasQueue { get; }
         protected virtual BlockingCollection<Action> TaskQueue { get; }
         protected virtual Thread TaskConsumer { get; }
 
-        public DefaultThreadPool(IBuilder builder)
+        public DefaultThreadPool(IThreadPoolConfig config)
         {
-            if (builder == null)
-                throw new ArgumentNullException("builder is null");
+            if (config == null)
+                throw new ArgumentNullException("config is null");
 
-            Config = NewConfig(builder);
+            Config = config;
             ObjectPool = NewObjectPool();
 
             HasQueue = Config.QueueCapacity > 0;
@@ -39,14 +39,25 @@ namespace MyDotey.ObjectPool.ThreadPool
             }
         }
 
-        protected virtual IThreadPoolConfig NewConfig(IBuilder builder)
-        {
-            return ((ThreadPoolConfig.Builder)builder).SetThreadPool(this).Build();
-        }
-
         protected virtual IObjectPool<WorkerThread> NewObjectPool()
         {
-            return ObjectPools.NewObjectPool((ObjectPoolConfig<WorkerThread>)Config);
+            IBuilder<WorkerThread> builder = ObjectPools.NewObjectPoolConfigBuilder<WorkerThread>();
+            SetObjectPoolConfigBuilder<IBuilder<WorkerThread>>(builder);
+            return ObjectPools.NewObjectPool(builder.Build());
+        }
+
+        protected virtual void SetObjectPoolConfigBuilder<B>(IAbstractBuilder<WorkerThread, B> builder)
+            where B : IAbstractBuilder<WorkerThread, B>
+        {
+            builder.SetMaxSize(Config.MaxSize)
+                    .SetMinSize(Config.MinSize)
+                    .SetObjectFactory(() => new WorkerThread(t => ObjectPool.Release(t.PoolEntry)))
+                    .SetOnCreate(e =>
+                    {
+                        e.Object.PoolEntry = e;
+                        e.Object.Start();
+                    })
+                    .SetOnClose(e => e.Object.InnerThread.Interrupt());
         }
 
         public virtual int Size { get { return ObjectPool.Size; } }

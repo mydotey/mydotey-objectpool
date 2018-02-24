@@ -20,16 +20,16 @@ public class ThreadPools {
         return new DefaultThreadPoolConfig.Builder();
     }
 
-    public static ThreadPool newThreadPool(ThreadPoolConfig.Builder builder) {
-        return new DefaultThreadPool(builder);
+    public static ThreadPool newThreadPool(ThreadPoolConfig config) {
+        return new DefaultThreadPool(config);
     }
 
     public static AutoScaleThreadPoolConfig.Builder newAutoScaleThreadPoolConfigBuilder() {
         return new DefaultAutoScaleThreadPoolConfig.Builder();
     }
 
-    public static AutoScaleThreadPool newAutoScaleThreadPool(AutoScaleThreadPoolConfig.Builder builder) {
-        return new DefaultAutoScaleThreadPool(builder);
+    public static AutoScaleThreadPool newAutoScaleThreadPool(AutoScaleThreadPoolConfig config) {
+        return new DefaultAutoScaleThreadPool(config);
     }
 
 }

@@ -1,7 +1,6 @@
 package org.mydotey.objectpool.threadpool.autoscale;
 
 import org.mydotey.objectpool.autoscale.DefaultAutoScaleObjectPoolConfig;
-import org.mydotey.objectpool.threadpool.ThreadPool;
 import org.mydotey.objectpool.threadpool.WorkerThread;
 
 /**
@@ -25,8 +24,6 @@ public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPool
 
     public static class Builder extends DefaultAutoScaleObjectPoolConfig.Builder<WorkerThread>
             implements AutoScaleThreadPoolConfig.Builder {
-
-        private ThreadPool _threadPool;
 
         public Builder() {
             setQueueCapacity(Integer.MAX_VALUE);
@@ -73,26 +70,11 @@ public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPool
             return (Builder) super.setCheckInterval(checkInterval);
         }
 
-        protected Builder setThreadPool(ThreadPool pool) {
-            _threadPool = pool;
-            return this;
-        }
-
         @Override
         public DefaultAutoScaleThreadPoolConfig build() {
             if (getPoolConfig()._queueCapacity < 0)
                 throw new IllegalArgumentException("queueCapacity is less than 0");
 
-            if (_threadPool == null)
-                throw new IllegalArgumentException("threadPool is null");
-
-            DefaultAutoScaleThreadPool pool = (DefaultAutoScaleThreadPool) _threadPool;
-            setObjectFactory(() -> new WorkerThread(t -> pool.getObjectPool().release(t.getPoolEntry())))
-                    .setOnCreate(e -> {
-                        e.getObject().setPoolEntry(e);
-                        e.getObject().start();
-                    }).setOnClose(e -> e.getObject().interrupt())
-                    .setStaleChecker(t -> t.getState() == Thread.State.TERMINATED);
             return (DefaultAutoScaleThreadPoolConfig) super.build();
         }
 

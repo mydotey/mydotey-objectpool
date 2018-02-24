@@ -20,8 +20,6 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
 
         protected internal new class Builder : AutoScaleObjectPoolConfig<WorkerThread>.Builder, IBuilder
         {
-            private IThreadPool _threadPool;
-
             public Builder()
             {
                 SetQueueSize(int.MaxValue);
@@ -80,12 +78,6 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
                 return (IBuilder)base.SetCheckInterval(checkInterval);
             }
 
-            protected internal virtual IBuilder SetThreadPool(IThreadPool pool)
-            {
-                _threadPool = pool;
-                return this;
-            }
-
             ThreadPool.IThreadPoolConfig ThreadPool.IBuilder.Build()
             {
                 return Build();
@@ -96,19 +88,6 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
                 if (Config.QueueCapacity < 0)
                     throw new ArgumentException("queueCapacity is less than 0");
 
-                if (_threadPool == null)
-                    throw new ArgumentNullException("threadPool is null");
-
-                AutoScaleThreadPool pool = (AutoScaleThreadPool)_threadPool;
-                SetObjectFactory(() => new WorkerThread(t => pool.ObjectPool.Release(t.PoolEntry)))
-                    .SetOnCreate(e =>
-                    {
-                        e.Object.PoolEntry = e;
-                        e.Object.Start();
-                    })
-                    .SetOnClose(e => e.Object.InnerThread.Interrupt())
-                    .SetStaleChecker(t => t.InnerThread.ThreadState == ThreadState.Aborted
-                        || t.InnerThread.ThreadState == ThreadState.Stopped);
                 return (AutoScaleThreadPoolConfig)base.Build();
             }
         }

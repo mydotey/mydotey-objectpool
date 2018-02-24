@@ -65,7 +65,7 @@ namespace MyDotey.ObjectPool.AutoScale
 
             ThreadPool.IBuilder builder = ThreadPools.NewThreadPoolConfigBuilder();
             builder.SetMinSize(1).SetMaxSize(1).SetQueueCapacity(Config.MaxSize);
-            _taskExecutor = ThreadPools.NewThreadPool(builder);
+            _taskExecutor = ThreadPools.NewThreadPool(builder.Build());
         }
 
         protected override ObjectPool<T>.Entry TryAddNewEntryAndAcquireOne()

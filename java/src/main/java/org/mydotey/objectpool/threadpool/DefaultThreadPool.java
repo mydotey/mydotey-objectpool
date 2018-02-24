@@ -17,15 +17,16 @@ import org.mydotey.objectpool.facade.ObjectPools;
  */
 public class DefaultThreadPool implements ThreadPool {
 
-    protected ThreadPoolConfig _config;
+    private ThreadPoolConfig _config;
     protected ObjectPool<WorkerThread> _objectPool;
 
     protected boolean _hasQueue;
     protected BlockingQueue<Runnable> _taskQueue;
     protected Thread _taskConsumer;
 
-    public DefaultThreadPool(ThreadPoolConfig.Builder builder) {
-        _config = newConfig(builder);
+    public DefaultThreadPool(ThreadPoolConfig config) {
+        Objects.requireNonNull(config, "config is null");
+        _config = config;
         _objectPool = newObjectPool();
 
         _hasQueue = _config.getQueueCapacity() > 0;
@@ -37,13 +38,19 @@ public class DefaultThreadPool implements ThreadPool {
         }
     }
 
-    protected ThreadPoolConfig newConfig(ThreadPoolConfig.Builder builder) {
-        return ((DefaultThreadPoolConfig.Builder) builder).setThreadPool(this).build();
+    protected ObjectPool<WorkerThread> newObjectPool() {
+        ObjectPoolConfig.Builder<WorkerThread> builder = ObjectPools.newObjectPoolConfigBuilder();
+        setObjectPoolConfigBuilder(builder);
+        return ObjectPools.newObjectPool(builder.build());
     }
 
-    @SuppressWarnings("unchecked")
-    protected ObjectPool<WorkerThread> newObjectPool() {
-        return ObjectPools.newObjectPool((ObjectPoolConfig<WorkerThread>) _config);
+    protected void setObjectPoolConfigBuilder(ObjectPoolConfig.AbstractBuilder<WorkerThread, ?> builder) {
+        builder.setMaxSize(_config.getMaxSize()).setMinSize(_config.getMinSize())
+                .setObjectFactory(() -> new WorkerThread(t -> getObjectPool().release(t.getPoolEntry())))
+                .setOnCreate(e -> {
+                    e.getObject().setPoolEntry(e);
+                    e.getObject().start();
+                }).setOnClose(e -> e.getObject().interrupt());
     }
 
     protected ObjectPool<WorkerThread> getObjectPool() {

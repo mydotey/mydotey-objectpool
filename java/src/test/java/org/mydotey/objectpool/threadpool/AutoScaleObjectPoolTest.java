@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
+import org.mydotey.objectpool.ObjectPoolConfig;
 import org.mydotey.objectpool.autoscale.AutoScaleObjectPoolConfig;
 import org.mydotey.objectpool.facade.ThreadPools;
 import org.mydotey.objectpool.threadpool.ThreadPool;
 import org.mydotey.objectpool.threadpool.WorkerThread;
 import org.mydotey.objectpool.threadpool.autoscale.AutoScaleThreadPoolConfig;
+import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPool;
 
 /**
  * @author koqizhao
@@ -27,8 +29,12 @@ public class AutoScaleObjectPoolTest extends ObjectPoolTest {
         AutoScaleThreadPoolConfig.Builder builder = ThreadPools.newAutoScaleThreadPoolConfigBuilder();
         builder.setMinSize(_minSize).setMaxSize(_maxSize).setScaleFactor(5).setCheckInterval(checkInterval)
                 .setMaxIdleTime(maxIdleTime);
-        ((AutoScaleObjectPoolConfig.Builder<WorkerThread>) builder).setObjectTtl(ttl);
-        return ThreadPools.newAutoScaleThreadPool(builder);
+        return new DefaultAutoScaleThreadPool(builder.build()) {
+            @Override
+            protected void setObjectPoolConfigBuilder(ObjectPoolConfig.AbstractBuilder<WorkerThread, ?> builder) {
+                ((AutoScaleObjectPoolConfig.Builder<WorkerThread>) builder).setObjectTtl(ttl);
+            }
+        };
     }
 
     @Override

@@ -23,8 +23,6 @@ public class DefaultThreadPoolConfig extends DefaultObjectPoolConfig<WorkerThrea
     public static class Builder extends DefaultObjectPoolConfig.Builder<WorkerThread>
             implements ThreadPoolConfig.Builder {
 
-        private ThreadPool _threadPool;
-
         public Builder() {
             setQueueCapacity(Integer.MAX_VALUE);
         }
@@ -55,25 +53,11 @@ public class DefaultThreadPoolConfig extends DefaultObjectPoolConfig<WorkerThrea
             return this;
         }
 
-        protected Builder setThreadPool(ThreadPool pool) {
-            _threadPool = pool;
-            return this;
-        }
-
         @Override
         public DefaultThreadPoolConfig build() {
             if (getPoolConfig()._queueCapacity < 0)
                 throw new IllegalArgumentException("queueCapacity is less than 0");
 
-            if (_threadPool == null)
-                throw new IllegalArgumentException("threadPool is null");
-
-            DefaultThreadPool pool = (DefaultThreadPool) _threadPool;
-            setObjectFactory(() -> new WorkerThread(t -> pool.getObjectPool().release(t.getPoolEntry())))
-                    .setOnCreate(e -> {
-                        e.getObject().setPoolEntry(e);
-                        e.getObject().start();
-                    }).setOnClose(e -> e.getObject().interrupt());
             return (DefaultThreadPoolConfig) super.build();
         }
 

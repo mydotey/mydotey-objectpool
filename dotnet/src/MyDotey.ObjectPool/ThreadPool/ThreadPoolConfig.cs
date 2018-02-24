@@ -18,8 +18,6 @@ namespace MyDotey.ObjectPool.ThreadPool
 
         protected internal new class Builder : ObjectPoolConfig<WorkerThread>.Builder, IBuilder
         {
-            private IThreadPool _threadPool;
-
             public Builder()
             {
                 SetQueueCapacity(int.MaxValue);
@@ -48,28 +46,11 @@ namespace MyDotey.ObjectPool.ThreadPool
                 return this;
             }
 
-            protected internal virtual IBuilder SetThreadPool(IThreadPool pool)
-            {
-                _threadPool = pool;
-                return this;
-            }
-
             public new virtual IThreadPoolConfig Build()
             {
                 if (Config.QueueCapacity < 0)
                     throw new ArgumentException("queueCapacity is less than 0");
 
-                if (_threadPool == null)
-                    throw new ArgumentNullException("threadPool is null");
-
-                DefaultThreadPool pool = (DefaultThreadPool)_threadPool;
-                SetObjectFactory(() => new WorkerThread(t => pool.ObjectPool.Release(t.PoolEntry)))
-                    .SetOnCreate(e =>
-                    {
-                        e.Object.PoolEntry = e;
-                        e.Object.Start();
-                    })
-                    .SetOnClose(e => e.Object.InnerThread.Interrupt());
                 return (IThreadPoolConfig)base.Build();
             }
         }

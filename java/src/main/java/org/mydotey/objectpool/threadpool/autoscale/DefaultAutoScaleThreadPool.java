@@ -5,10 +5,8 @@ import org.mydotey.objectpool.autoscale.AutoScaleObjectPool;
 import org.mydotey.objectpool.autoscale.AutoScaleObjectPoolConfig;
 import org.mydotey.objectpool.facade.ObjectPools;
 import org.mydotey.objectpool.threadpool.DefaultThreadPool;
-import org.mydotey.objectpool.threadpool.ThreadPoolConfig;
 import org.mydotey.objectpool.threadpool.WorkerThread;
 import org.mydotey.objectpool.threadpool.autoscale.AutoScaleThreadPoolConfig;
-import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPoolConfig;
 
 /**
  * @author koqizhao
@@ -17,8 +15,8 @@ import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPoolCon
  */
 public class DefaultAutoScaleThreadPool extends DefaultThreadPool implements AutoScaleThreadPool {
 
-    public DefaultAutoScaleThreadPool(AutoScaleThreadPoolConfig.Builder builder) {
-        super(builder);
+    public DefaultAutoScaleThreadPool(AutoScaleThreadPoolConfig config) {
+        super(config);
     }
 
     @Override
@@ -27,14 +25,13 @@ public class DefaultAutoScaleThreadPool extends DefaultThreadPool implements Aut
     }
 
     @Override
-    protected ThreadPoolConfig newConfig(ThreadPoolConfig.Builder builder) {
-        return ((DefaultAutoScaleThreadPoolConfig.Builder) builder).setThreadPool(this).build();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     protected AutoScaleObjectPool<WorkerThread> newObjectPool() {
-        return ObjectPools.newAutoScaleObjectPool((AutoScaleObjectPoolConfig<WorkerThread>) getConfig());
+        AutoScaleObjectPoolConfig.Builder<WorkerThread> builder = ObjectPools.newAutoScaleObjectPoolConfigBuilder();
+        builder.setCheckInterval(getConfig().getCheckInterval()).setMaxIdleTime(getConfig().getMaxIdleTime())
+                .setScaleFactor(getConfig().getScaleFactor())
+                .setStaleChecker(t -> t.getState() == Thread.State.TERMINATED);
+        setObjectPoolConfigBuilder(builder);
+        return ObjectPools.newAutoScaleObjectPool(builder.build());
     }
 
     @Override

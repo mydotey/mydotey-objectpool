@@ -38,7 +38,7 @@ public class ObjectPoolTest {
     protected ThreadPool newThreadPool() {
         ThreadPoolConfig.Builder builder = ThreadPools.newThreadPoolConfigBuilder();
         builder.setMinSize(_minSize).setMaxSize(_maxSize);
-        return ThreadPools.newThreadPool(builder);
+        return ThreadPools.newThreadPool(builder.build());
     }
 
     @Test
