@@ -91,7 +91,7 @@ namespace MyDotey.ObjectPool.AutoScale
                 if (Config.StaleChecker == null)
                     throw new ArgumentNullException("staleChecker is null.");
 
-                if (Config.CheckInterval <= 0)
+                if (Config.CheckInterval <= 0 || Config.CheckInterval > int.MaxValue)
                     throw new ArgumentException("checkInterval is invalid: " + Config.CheckInterval);
 
                 if (Config.ScaleFactor <= 0)

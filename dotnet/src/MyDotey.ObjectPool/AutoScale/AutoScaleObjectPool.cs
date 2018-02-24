@@ -177,7 +177,7 @@ namespace MyDotey.ObjectPool.AutoScale
             {
                 try
                 {
-                    Thread.Sleep(Config.CheckInterval);
+                    Thread.Sleep((int)Config.CheckInterval);
                 }
                 catch (Exception ex)
                 {
