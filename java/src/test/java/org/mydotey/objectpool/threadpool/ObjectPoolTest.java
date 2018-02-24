@@ -37,7 +37,7 @@ public class ObjectPoolTest {
 
     protected ThreadPool newThreadPool() {
         ThreadPoolConfig.Builder builder = ThreadPools.newThreadPoolConfigBuilder();
-        builder.setMinSize(_minSize).setMaxSize(_maxSize);
+        builder.setMinSize(_minSize).setMaxSize(_maxSize).setQueueCapacity(0);
         return ThreadPools.newThreadPool(builder.build());
     }
 
@@ -77,7 +77,7 @@ public class ObjectPoolTest {
     @Test
     public void threadPoolSubmitTaskTest3() throws IOException, InterruptedException {
         int taskCount = 50;
-        long taskSleep = 100;
+        long taskSleep = 50;
         long viInitDelay = _defaultViInitDelay;
         int sizeAfterSubmit = _defaultSizeAfterSumit;
         long finishSleep = 1000;
@@ -99,7 +99,7 @@ public class ObjectPoolTest {
     @Test
     public void threadPoolSubmitTaskTest5() throws IOException, InterruptedException {
         int taskCount = 200;
-        long taskSleep = 100;
+        long taskSleep = 50;
         long viInitDelay = _defaultViInitDelay;
         int sizeAfterSubmit = _maxSize;
         long finishSleep = 1000;

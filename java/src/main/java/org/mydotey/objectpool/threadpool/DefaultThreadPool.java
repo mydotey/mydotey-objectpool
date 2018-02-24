@@ -77,6 +77,9 @@ public class DefaultThreadPool implements ThreadPool {
         Objects.requireNonNull(task, "task is null");
 
         if (_hasQueue) {
+            if (trySubmit(task))
+                return;
+
             _taskQueue.put(task);
             return;
         }

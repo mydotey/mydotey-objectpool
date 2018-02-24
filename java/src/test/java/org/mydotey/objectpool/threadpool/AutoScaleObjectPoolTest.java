@@ -28,7 +28,7 @@ public class AutoScaleObjectPoolTest extends ObjectPoolTest {
     protected ThreadPool newThreadPool(long checkInterval, long maxIdleTime, long ttl) {
         AutoScaleThreadPoolConfig.Builder builder = ThreadPools.newAutoScaleThreadPoolConfigBuilder();
         builder.setMinSize(_minSize).setMaxSize(_maxSize).setScaleFactor(5).setCheckInterval(checkInterval)
-                .setMaxIdleTime(maxIdleTime);
+                .setMaxIdleTime(maxIdleTime).setQueueCapacity(0);
         return new DefaultAutoScaleThreadPool(builder.build()) {
             @Override
             protected void setObjectPoolConfigBuilder(ObjectPoolConfig.AbstractBuilder<WorkerThread, ?> builder) {

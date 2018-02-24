@@ -71,6 +71,9 @@ namespace MyDotey.ObjectPool.ThreadPool
 
             if (HasQueue)
             {
+                if (TrySubmit(task))
+                    return;
+
                 TaskQueue.Add(task);
                 return;
             }
