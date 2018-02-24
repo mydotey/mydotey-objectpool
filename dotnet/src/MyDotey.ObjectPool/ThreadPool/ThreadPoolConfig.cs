@@ -7,8 +7,12 @@ using System;
  */
 namespace MyDotey.ObjectPool.ThreadPool
 {
-    public class ThreadPoolConfig : ObjectPoolConfig<WorkerThread>, IThreadPoolConfig
+    public class ThreadPoolConfig : IThreadPoolConfig, ICloneable
     {
+        public virtual int MinSize { get; private set; }
+
+        public virtual int MaxSize { get; private set; }
+
         public virtual int QueueCapacity { get; private set; }
 
         protected internal ThreadPoolConfig()
@@ -16,42 +20,66 @@ namespace MyDotey.ObjectPool.ThreadPool
 
         }
 
-        protected internal new class Builder : ObjectPoolConfig<WorkerThread>.Builder, IBuilder
+        public virtual object Clone()
         {
-            public Builder()
+            return MemberwiseClone();
+        }
+
+        protected internal class Builder : AbstractBuilder<IBuilder>, IBuilder
+        {
+
+        }
+
+        protected internal abstract class AbstractBuilder<B> : IAbstractBuilder<B>
+            where B : IAbstractBuilder<B>
+        {
+            protected virtual ThreadPoolConfig Config { get; }
+
+            protected AbstractBuilder()
             {
-                SetQueueCapacity(int.MaxValue);
+                Config = NewPoolConfig();
+                Config.QueueCapacity = int.MaxValue;
             }
 
-            protected override ObjectPoolConfig<WorkerThread> NewPoolConfig()
+            protected virtual ThreadPoolConfig NewPoolConfig()
             {
                 return new ThreadPoolConfig();
             }
 
-            protected new virtual ThreadPoolConfig Config { get { return (ThreadPoolConfig)base.Config; } }
-
-            public new virtual IBuilder SetMinSize(int minSize)
+            public virtual B SetMinSize(int minSize)
             {
-                return (IBuilder)base.SetMinSize(minSize);
+                Config.MinSize = minSize;
+                return (B)(object)this;
             }
 
-            public new virtual IBuilder SetMaxSize(int maxSize)
+            public virtual B SetMaxSize(int maxSize)
             {
-                return (IBuilder)base.SetMaxSize(maxSize);
+                Config.MaxSize = maxSize;
+                return (B)(object)this;
             }
 
-            public virtual IBuilder SetQueueCapacity(int queueCapacity)
+            public virtual B SetQueueCapacity(int queueCapacity)
             {
                 Config.QueueCapacity = queueCapacity;
-                return this;
+                return (B)(object)this;
             }
 
-            public new virtual IThreadPoolConfig Build()
+            public virtual IThreadPoolConfig Build()
             {
+                if (Config.MinSize < 0)
+                    throw new ArgumentException("minSize is invalid: " + Config.MinSize);
+
+                if (Config.MaxSize <= 0)
+                    throw new ArgumentException("maxSize is invalid: " + Config.MaxSize);
+
+                if (Config.MinSize > Config.MaxSize)
+                    throw new ArgumentException("minSize is larger than maxSize. minSize: " + Config.MinSize
+                            + ", maxSize: " + Config.MaxSize);
+
                 if (Config.QueueCapacity < 0)
                     throw new ArgumentException("queueCapacity is less than 0");
 
-                return (IThreadPoolConfig)base.Build();
+                return (IThreadPoolConfig)Config.Clone();
             }
         }
     }

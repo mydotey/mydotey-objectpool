@@ -131,7 +131,7 @@ public class DefaultObjectPoolConfig<T> implements ObjectPoolConfig<T>, Cloneabl
         }
 
         @Override
-        public ObjectPoolConfig<T> build() {
+        public DefaultObjectPoolConfig<T> build() {
             if (_config._minSize < 0)
                 throw new IllegalArgumentException("minSize is invalid: " + _config._minSize);
 
@@ -139,7 +139,7 @@ public class DefaultObjectPoolConfig<T> implements ObjectPoolConfig<T>, Cloneabl
                 throw new IllegalArgumentException("maxSize is invalid: " + _config._maxSize);
 
             if (_config._minSize > _config._maxSize)
-                throw new IllegalArgumentException("minSize is larger than maxSiz. minSize: " + _config._minSize
+                throw new IllegalArgumentException("minSize is larger than maxSize. minSize: " + _config._minSize
                         + ", maxSize: " + _config._maxSize);
 
             if (_config._objectFactory == null)

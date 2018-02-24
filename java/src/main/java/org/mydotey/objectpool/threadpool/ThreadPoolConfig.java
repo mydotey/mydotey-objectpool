@@ -13,13 +13,17 @@ public interface ThreadPoolConfig {
 
     int getQueueCapacity();
 
-    interface Builder {
+    interface Builder extends AbstractBuilder<Builder> {
 
-        Builder setMinSize(int minSize);
+    }
 
-        Builder setMaxSize(int maxSize);
+    interface AbstractBuilder<B extends AbstractBuilder<B>> {
 
-        Builder setQueueCapacity(int queueCapacity);
+        B setMinSize(int minSize);
+
+        B setMaxSize(int maxSize);
+
+        B setQueueCapacity(int queueCapacity);
 
         ThreadPoolConfig build();
     }

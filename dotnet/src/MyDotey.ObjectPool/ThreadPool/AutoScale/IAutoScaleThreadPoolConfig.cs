@@ -16,19 +16,19 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
         long CheckInterval { get; }
     }
 
-    public interface IBuilder : ThreadPool.IBuilder
+    public interface IBuilder : IAbstractBuilder<IBuilder>
     {
-        new IBuilder SetMinSize(int minSize);
 
-        new IBuilder SetMaxSize(int maxSize);
+    }
 
-        new IBuilder SetQueueSize(int queueSize);
+    public interface IAbstractBuilder<B> : ThreadPool.IAbstractBuilder<B>
+        where B : IAbstractBuilder<B>
+    {
+        B SetMaxIdleTime(long maxIdleTime);
 
-        IBuilder SetMaxIdleTime(long maxIdleTime);
+        B SetScaleFactor(int scaleFactor);
 
-        IBuilder SetScaleFactor(int scaleFactor);
-
-        IBuilder SetCheckInterval(long checkInterval);
+        B SetCheckInterval(long checkInterval);
 
         new IAutoScaleThreadPoolConfig Build();
     }

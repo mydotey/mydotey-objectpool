@@ -15,22 +15,17 @@ public interface AutoScaleThreadPoolConfig extends ThreadPoolConfig {
 
     long getCheckInterval();
 
-    interface Builder extends ThreadPoolConfig.Builder {
+    interface Builder extends AbstractBuilder<Builder> {
 
-        @Override
-        Builder setMinSize(int minSize);
+    }
 
-        @Override
-        Builder setMaxSize(int maxSize);
+    interface AbstractBuilder<B extends AbstractBuilder<B>> extends ThreadPoolConfig.AbstractBuilder<B> {
 
-        @Override
-        Builder setQueueCapacity(int queueCapacity);
+        B setMaxIdleTime(long maxIdleTime);
 
-        Builder setMaxIdleTime(long maxIdleTime);
+        B setScaleFactor(int scaleFactor);
 
-        Builder setScaleFactor(int scaleFactor);
-
-        Builder setCheckInterval(long checkInterval);
+        B setCheckInterval(long checkInterval);
 
         @Override
         AutoScaleThreadPoolConfig build();

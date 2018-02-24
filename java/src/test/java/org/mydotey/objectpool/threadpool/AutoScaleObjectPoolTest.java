@@ -32,6 +32,7 @@ public class AutoScaleObjectPoolTest extends ObjectPoolTest {
         return new DefaultAutoScaleThreadPool(builder.build()) {
             @Override
             protected void setObjectPoolConfigBuilder(ObjectPoolConfig.AbstractBuilder<WorkerThread, ?> builder) {
+                super.setObjectPoolConfigBuilder(builder);
                 ((AutoScaleObjectPoolConfig.Builder<WorkerThread>) builder).setObjectTtl(ttl);
             }
         };

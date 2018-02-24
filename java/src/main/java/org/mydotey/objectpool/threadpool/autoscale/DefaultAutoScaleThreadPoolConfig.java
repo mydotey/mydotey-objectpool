@@ -1,32 +1,52 @@
 package org.mydotey.objectpool.threadpool.autoscale;
 
-import org.mydotey.objectpool.autoscale.DefaultAutoScaleObjectPoolConfig;
-import org.mydotey.objectpool.threadpool.WorkerThread;
+import java.util.concurrent.TimeUnit;
+
+import org.mydotey.objectpool.threadpool.DefaultThreadPoolConfig;
 
 /**
  * @author koqizhao
  *
  * Feb 5, 2018
  */
-public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPoolConfig<WorkerThread>
-        implements AutoScaleThreadPoolConfig {
+public class DefaultAutoScaleThreadPoolConfig extends DefaultThreadPoolConfig implements AutoScaleThreadPoolConfig {
 
-    private int _queueCapacity;
+    private long _maxIdleTime;
+    private long _checkInterval;
+    private int _scaleFactor;
 
     protected DefaultAutoScaleThreadPoolConfig() {
 
     }
 
     @Override
-    public int getQueueCapacity() {
-        return _queueCapacity;
+    public long getMaxIdleTime() {
+        return _maxIdleTime;
     }
 
-    public static class Builder extends DefaultAutoScaleObjectPoolConfig.Builder<WorkerThread>
+    @Override
+    public long getCheckInterval() {
+        return _checkInterval;
+    }
+
+    @Override
+    public int getScaleFactor() {
+        return _scaleFactor;
+    }
+
+    public static class Builder extends AbstractBuilder<AutoScaleThreadPoolConfig.Builder>
             implements AutoScaleThreadPoolConfig.Builder {
 
-        public Builder() {
-            setQueueCapacity(Integer.MAX_VALUE);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static abstract class AbstractBuilder<B extends AutoScaleThreadPoolConfig.AbstractBuilder<B>>
+            extends DefaultThreadPoolConfig.AbstractBuilder<B> implements AutoScaleThreadPoolConfig.AbstractBuilder<B> {
+
+        protected AbstractBuilder() {
+            getPoolConfig()._maxIdleTime = Long.MAX_VALUE;
+            getPoolConfig()._checkInterval = TimeUnit.SECONDS.toMillis(10);
+            getPoolConfig()._scaleFactor = 1;
         }
 
         @Override
@@ -40,40 +60,36 @@ public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPool
         }
 
         @Override
-        public Builder setMinSize(int minSize) {
-            return (Builder) super.setMinSize(minSize);
+        public B setMaxIdleTime(long maxIdleTime) {
+            getPoolConfig()._maxIdleTime = maxIdleTime;
+            return (B) this;
         }
 
         @Override
-        public Builder setMaxSize(int maxSize) {
-            return (Builder) super.setMaxSize(maxSize);
+        public B setCheckInterval(long checkInterval) {
+            getPoolConfig()._checkInterval = checkInterval;
+            return (B) this;
         }
 
         @Override
-        public Builder setQueueCapacity(int queueCapacity) {
-            getPoolConfig()._queueCapacity = queueCapacity;
-            return this;
-        }
-
-        @Override
-        public Builder setMaxIdleTime(long maxIdleTime) {
-            return (Builder) super.setMaxIdleTime(maxIdleTime);
-        }
-
-        @Override
-        public Builder setScaleFactor(int scaleFactor) {
-            return (Builder) super.setScaleFactor(scaleFactor);
-        }
-
-        @Override
-        public Builder setCheckInterval(long checkInterval) {
-            return (Builder) super.setCheckInterval(checkInterval);
+        public B setScaleFactor(int scaleFactor) {
+            getPoolConfig()._scaleFactor = scaleFactor;
+            return (B) this;
         }
 
         @Override
         public DefaultAutoScaleThreadPoolConfig build() {
-            if (getPoolConfig()._queueCapacity < 0)
-                throw new IllegalArgumentException("queueCapacity is less than 0");
+            if (getPoolConfig()._maxIdleTime <= 0)
+                throw new IllegalArgumentException("maxIdleTime is invalid: " + getPoolConfig()._maxIdleTime);
+
+            if (getPoolConfig()._checkInterval <= 0)
+                throw new IllegalArgumentException("checkInterval is invalid: " + getPoolConfig()._checkInterval);
+
+            if (getPoolConfig()._scaleFactor <= 0)
+                throw new IllegalArgumentException("invalid scaleFactor: " + getPoolConfig()._scaleFactor);
+
+            if (getPoolConfig()._scaleFactor - 1 > getPoolConfig().getMaxSize() - getPoolConfig().getMinSize())
+                throw new IllegalArgumentException("too large scaleFactor: " + getPoolConfig()._scaleFactor);
 
             return (DefaultAutoScaleThreadPoolConfig) super.build();
         }

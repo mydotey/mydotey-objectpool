@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using MyDotey.ObjectPool.AutoScale;
 
 /**
  * @author koqizhao
@@ -9,86 +7,74 @@ using MyDotey.ObjectPool.AutoScale;
  */
 namespace MyDotey.ObjectPool.ThreadPool.AutoScale
 {
-    public class AutoScaleThreadPoolConfig : AutoScaleObjectPoolConfig<WorkerThread>, IAutoScaleThreadPoolConfig
+    public class AutoScaleThreadPoolConfig : ThreadPoolConfig, IAutoScaleThreadPoolConfig
     {
-        public virtual int QueueCapacity { get; private set; }
+        public virtual long MaxIdleTime { get; private set; }
+
+        public virtual long CheckInterval { get; private set; }
+
+        public virtual int ScaleFactor { get; private set; }
 
         protected internal AutoScaleThreadPoolConfig()
         {
 
         }
 
-        protected internal new class Builder : AutoScaleObjectPoolConfig<WorkerThread>.Builder, IBuilder
+        protected internal new class Builder : AbstractBuilder<IBuilder>, IBuilder
         {
-            public Builder()
+
+        }
+
+        protected internal new abstract class AbstractBuilder<B> : ThreadPoolConfig.AbstractBuilder<B>, IAbstractBuilder<B>
+            where B : IAbstractBuilder<B>
+        {
+            public AbstractBuilder()
             {
-                SetQueueSize(int.MaxValue);
+                Config.MaxIdleTime = long.MaxValue;
+                Config.CheckInterval = 10 * 1000;
+                Config.ScaleFactor = 1;
             }
 
-            protected override ObjectPoolConfig<WorkerThread> NewPoolConfig()
+            protected override ThreadPoolConfig NewPoolConfig()
             {
                 return new AutoScaleThreadPoolConfig();
             }
 
             protected new virtual AutoScaleThreadPoolConfig Config { get { return (AutoScaleThreadPoolConfig)base.Config; } }
 
-            ThreadPool.IBuilder ThreadPool.IBuilder.SetMinSize(int minSize)
+            public virtual B SetMaxIdleTime(long maxIdleTime)
             {
-                return (ThreadPool.IBuilder)base.SetMinSize(minSize);
+                Config.MaxIdleTime = maxIdleTime;
+                return (B)(object)this;
             }
 
-            public new virtual IBuilder SetMinSize(int minSize)
+            public virtual B SetScaleFactor(int scaleFactor)
             {
-                return (IBuilder)base.SetMinSize(minSize);
+                Config.ScaleFactor = scaleFactor;
+                return (B)(object)this;
             }
 
-            ThreadPool.IBuilder ThreadPool.IBuilder.SetMaxSize(int maxSize)
+            public virtual B SetCheckInterval(long checkInterval)
             {
-                return (ThreadPool.IBuilder)base.SetMaxSize(maxSize);
-            }
-
-            public new virtual IBuilder SetMaxSize(int maxSize)
-            {
-                return (IBuilder)base.SetMaxSize(maxSize);
-            }
-
-            ThreadPool.IBuilder ThreadPool.IBuilder.SetQueueCapacity(int queueCapacity)
-            {
-                return SetQueueSize(queueCapacity);
-            }
-
-            public virtual IBuilder SetQueueSize(int queueCapacity)
-            {
-                Config.QueueCapacity = queueCapacity;
-                return this;
-            }
-
-            public new virtual IBuilder SetMaxIdleTime(long maxIdleTime)
-            {
-                return (IBuilder)base.SetMaxIdleTime(maxIdleTime);
-            }
-
-            public new virtual IBuilder SetScaleFactor(int scaleFactor)
-            {
-                return (IBuilder)base.SetScaleFactor(scaleFactor);
-            }
-
-            public new virtual IBuilder SetCheckInterval(long checkInterval)
-            {
-                return (IBuilder)base.SetCheckInterval(checkInterval);
-            }
-
-            ThreadPool.IThreadPoolConfig ThreadPool.IBuilder.Build()
-            {
-                return Build();
+                Config.CheckInterval = checkInterval;
+                return (B)(object)this;
             }
 
             public new virtual IAutoScaleThreadPoolConfig Build()
             {
-                if (Config.QueueCapacity < 0)
-                    throw new ArgumentException("queueCapacity is less than 0");
+                if (Config.MaxIdleTime <= 0)
+                    throw new ArgumentException("maxIdleTime is invalid: " + Config.MaxIdleTime);
 
-                return (AutoScaleThreadPoolConfig)base.Build();
+                if (Config.CheckInterval <= 0 || Config.CheckInterval > int.MaxValue)
+                    throw new ArgumentException("checkInterval is invalid: " + Config.CheckInterval);
+
+                if (Config.ScaleFactor <= 0)
+                    throw new ArgumentException("invalid scaleFactor: " + Config.ScaleFactor);
+
+                if (Config.ScaleFactor - 1 > Config.MaxSize - Config.MinSize)
+                    throw new ArgumentException("too large scaleFactor: " + Config.ScaleFactor);
+
+                return (IAutoScaleThreadPoolConfig)base.Build();
             }
         }
     }

@@ -110,7 +110,7 @@ namespace MyDotey.ObjectPool
                     throw new ArgumentException("maxSize is invalid: " + Config.MaxSize);
 
                 if (Config.MinSize > Config.MaxSize)
-                    throw new ArgumentException("minSize is larger than maxSiz. minSize: " + Config.MinSize
+                    throw new ArgumentException("minSize is larger than maxSize. minSize: " + Config.MinSize
                             + ", maxSize: " + Config.MaxSize);
 
                 if (Config.ObjectFactory == null)
