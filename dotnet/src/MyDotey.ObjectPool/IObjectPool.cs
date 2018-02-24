@@ -17,7 +17,7 @@ namespace MyDotey.ObjectPool
 
         int AvailableSize { get; }
 
-        bool IsDisposed { get; }
+        bool IsClosed { get; }
 
         IEntry<T> Acquire();
 

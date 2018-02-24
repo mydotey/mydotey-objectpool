@@ -16,7 +16,8 @@ namespace MyDotey.ObjectPool
         public virtual IObjectPoolConfig<T> Config { get; }
 
         protected object AddLock { get; }
-        protected volatile bool _isDisposed;
+
+        public virtual bool IsClosed { get; protected set; }
 
         protected Entry.KeyGenerator _keyGenerator;
         protected BlockingCollection<Object> _availableKeys;
@@ -67,12 +68,12 @@ namespace MyDotey.ObjectPool
 
         protected virtual Entry TryCreateNewEntry()
         {
-            if (IsDisposed)
+            if (IsClosed)
                 return null;
 
             lock (AddLock)
             {
-                if (IsDisposed)
+                if (IsClosed)
                     return null;
 
                 if (Size == Config.MaxSize)
@@ -142,8 +143,6 @@ namespace MyDotey.ObjectPool
             }
         }
 
-        public virtual bool IsDisposed { get { return _isDisposed; } }
-
         public virtual IEntry<T> Acquire()
         {
             CheckDisposed();
@@ -170,13 +169,13 @@ namespace MyDotey.ObjectPool
 
         protected virtual void CheckDisposed()
         {
-            if (IsDisposed)
+            if (IsClosed)
                 throw new ObjectDisposedException("object pool has been Disposed");
         }
 
         public virtual IEntry<T> TryAcquire()
         {
-            if (IsDisposed)
+            if (IsClosed)
                 return null;
 
             _availableKeys.TryTake(out object key);
@@ -220,7 +219,7 @@ namespace MyDotey.ObjectPool
 
         public virtual void Release(IEntry<T> entry)
         {
-            if (IsDisposed)
+            if (IsClosed)
                 return;
 
             Entry defaultEntry = (Entry)entry;
@@ -247,15 +246,15 @@ namespace MyDotey.ObjectPool
 
         public virtual void Dispose()
         {
-            if (IsDisposed)
+            if (IsClosed)
                 return;
 
             lock (AddLock)
             {
-                if (IsDisposed)
+                if (IsClosed)
                     return;
 
-                _isDisposed = true;
+                IsClosed = true;
                 DoDispose();
             }
         }
@@ -289,9 +288,9 @@ namespace MyDotey.ObjectPool
             public class EntryStatus
             {
                 public const string AVAILABLE = "available";
-                public const string ACQUIRED = "Acquired";
-                public const string RELEASED = "Released";
-                public const string CLOSED = "Disposed";
+                public const string ACQUIRED = "acquired";
+                public const string RELEASED = "released";
+                public const string CLOSED = "disposed";
             }
 
             public virtual object Key { get; }
