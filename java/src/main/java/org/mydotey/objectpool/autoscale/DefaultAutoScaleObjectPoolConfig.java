@@ -109,7 +109,7 @@ public class DefaultAutoScaleObjectPoolConfig<T> extends DefaultObjectPoolConfig
         }
 
         @Override
-        public AutoScaleObjectPoolConfig<T> build() {
+        public DefaultAutoScaleObjectPoolConfig<T> build() {
             if (getPoolConfig()._objectTtl <= 0)
                 throw new IllegalArgumentException("objectTtl is invalid: " + getPoolConfig()._objectTtl);
 

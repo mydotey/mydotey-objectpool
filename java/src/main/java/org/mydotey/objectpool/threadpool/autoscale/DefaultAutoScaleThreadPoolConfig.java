@@ -12,7 +12,7 @@ import org.mydotey.objectpool.threadpool.WorkerThread;
 public class DefaultAutoScaleThreadPoolConfig extends DefaultAutoScaleObjectPoolConfig<WorkerThread>
         implements AutoScaleThreadPoolConfig {
 
-    protected int _queueCapacity;
+    private int _queueCapacity;
 
     protected DefaultAutoScaleThreadPoolConfig() {
 

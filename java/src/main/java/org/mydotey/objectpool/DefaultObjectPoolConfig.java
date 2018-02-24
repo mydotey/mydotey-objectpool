@@ -84,7 +84,7 @@ public class DefaultObjectPoolConfig<T> implements ObjectPoolConfig<T>, Cloneabl
             }
         };
 
-        protected DefaultObjectPoolConfig<T> _config;
+        private DefaultObjectPoolConfig<T> _config;
 
         protected AbstractBuilder() {
             _config = newPoolConfig();

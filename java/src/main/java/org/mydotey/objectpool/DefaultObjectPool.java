@@ -21,7 +21,7 @@ public class DefaultObjectPool<T> implements ObjectPool<T> {
 
     private static Logger _logger = LoggerFactory.getLogger(DefaultObjectPool.class);
 
-    protected ObjectPoolConfig<T> _config;
+    private ObjectPoolConfig<T> _config;
 
     protected Object _addLock;
     protected volatile boolean _isClosed;

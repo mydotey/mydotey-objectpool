@@ -45,7 +45,7 @@ public class DefaultAutoScaleObjectPool<T> extends DefaultObjectPool<T> implemen
         _availableKeys = new LinkedBlockingDeque<>();
         _entries = new ConcurrentHashMap<>();
 
-        tryAddNewEntry(_config.getMinSize());
+        tryAddNewEntry(getConfig().getMinSize());
 
         _taskScheduler = Executors.newSingleThreadScheduledExecutor();
         _taskScheduler.scheduleWithFixedDelay(() -> DefaultAutoScaleObjectPool.this.autoCheck(),

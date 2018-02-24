@@ -25,7 +25,7 @@ namespace MyDotey.ObjectPool.AutoScale
 
     }
 
-    public interface IAbstractBuilder<T, B> : MyDotey.ObjectPool.IAbstractBuilder<T, B>
+    public interface IAbstractBuilder<T, B> : ObjectPool.IAbstractBuilder<T, B>
         where B : IAbstractBuilder<T, B>
     {
         B SetObjectTtl(long objectTtl);

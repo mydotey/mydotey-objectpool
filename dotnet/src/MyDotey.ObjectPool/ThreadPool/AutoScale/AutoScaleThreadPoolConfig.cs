@@ -11,7 +11,7 @@ namespace MyDotey.ObjectPool.ThreadPool.AutoScale
 {
     public class AutoScaleThreadPoolConfig : AutoScaleObjectPoolConfig<WorkerThread>, IAutoScaleThreadPoolConfig
     {
-        public virtual int QueueCapacity { get; protected set; }
+        public virtual int QueueCapacity { get; private set; }
 
         protected internal AutoScaleThreadPoolConfig()
         {

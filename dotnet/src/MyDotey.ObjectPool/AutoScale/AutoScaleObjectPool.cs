@@ -17,12 +17,12 @@ namespace MyDotey.ObjectPool.AutoScale
 
         protected internal static long CurrentTimeMillis { get { return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond; } }
 
-        protected Timer _taskScheduler;
+        protected Thread _taskScheduler;
 
         protected volatile int _scalingOut;
         protected Action _scaleOutTask;
 
-        protected IThreadPool _threadPool;
+        protected IThreadPool _taskExecutor;
 
         public new virtual IAutoScaleObjectPoolConfig<T> Config { get { return (AutoScaleObjectPoolConfig<T>)base.Config; } }
 
@@ -40,7 +40,11 @@ namespace MyDotey.ObjectPool.AutoScale
 
             TryAddNewEntry(Config.MinSize);
 
-            _taskScheduler = new Timer(o => AutoCheck(), this, Config.CheckInterval, Config.CheckInterval);
+            _taskScheduler = new Thread(AutoCheck)
+            {
+                IsBackground = true
+            };
+            _taskScheduler.Start();
 
             _scaleOutTask = () =>
             {
@@ -61,7 +65,7 @@ namespace MyDotey.ObjectPool.AutoScale
 
             ThreadPool.IBuilder builder = ThreadPools.NewThreadPoolConfigBuilder();
             builder.SetMinSize(1).SetMaxSize(1).SetQueueCapacity(Config.MaxSize);
-            _threadPool = ThreadPools.NewThreadPool(builder);
+            _taskExecutor = ThreadPools.NewThreadPool(builder);
         }
 
         protected override ObjectPool<T>.Entry TryAddNewEntryAndAcquireOne()
@@ -169,12 +173,24 @@ namespace MyDotey.ObjectPool.AutoScale
 
         protected virtual void AutoCheck()
         {
-            foreach (Object key in _entries.Keys)
+            while (true)
             {
-                if (TryScaleIn(key))
-                    continue;
+                try
+                {
+                    Thread.Sleep(Config.CheckInterval);
+                }
+                catch (Exception ex)
+                {
+                    break;
+                }
 
-                TryRefresh(key);
+                foreach (Object key in _entries.Keys)
+                {
+                    if (TryScaleIn(key))
+                        continue;
+
+                    TryRefresh(key);
+                }
             }
         }
 
@@ -282,8 +298,8 @@ namespace MyDotey.ObjectPool.AutoScale
 
             try
             {
-                _taskScheduler.Dispose();
-                _threadPool.Dispose();
+                _taskScheduler.Interrupt();
+                _taskExecutor.Dispose();
             }
             catch (Exception e)
             {
@@ -295,7 +311,7 @@ namespace MyDotey.ObjectPool.AutoScale
         {
             try
             {
-                _threadPool.Submit(task);
+                _taskExecutor.Submit(task);
             }
             catch (Exception ex)
             {

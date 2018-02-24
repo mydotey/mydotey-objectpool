@@ -9,15 +9,15 @@ namespace MyDotey.ObjectPool
 {
     public class ObjectPoolConfig<T> : IObjectPoolConfig<T>, ICloneable
     {
-        public virtual int MinSize { get; protected set; }
+        public virtual int MinSize { get; private set; }
 
-        public virtual int MaxSize { get; protected set; }
+        public virtual int MaxSize { get; private set; }
 
-        public virtual Func<T> ObjectFactory { get; protected set; }
+        public virtual Func<T> ObjectFactory { get; private set; }
 
-        public virtual Action<IEntry<T>> OnCreate { get; protected set; }
+        public virtual Action<IEntry<T>> OnCreate { get; private set; }
 
-        public virtual Action<IEntry<T>> OnClose { get; protected set; }
+        public virtual Action<IEntry<T>> OnClose { get; private set; }
 
         protected ObjectPoolConfig()
         {

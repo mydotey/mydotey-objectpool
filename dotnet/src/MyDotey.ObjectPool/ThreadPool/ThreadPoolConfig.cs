@@ -9,7 +9,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 {
     public class ThreadPoolConfig : ObjectPoolConfig<WorkerThread>, IThreadPoolConfig
     {
-        public virtual int QueueCapacity { get; protected set; }
+        public virtual int QueueCapacity { get; private set; }
 
         protected internal ThreadPoolConfig()
         {

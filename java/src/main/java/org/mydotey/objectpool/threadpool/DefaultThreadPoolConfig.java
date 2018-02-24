@@ -9,7 +9,7 @@ import org.mydotey.objectpool.DefaultObjectPoolConfig;
  */
 public class DefaultThreadPoolConfig extends DefaultObjectPoolConfig<WorkerThread> implements ThreadPoolConfig {
 
-    protected int _queueCapacity;
+    private int _queueCapacity;
 
     protected DefaultThreadPoolConfig() {
 
@@ -36,7 +36,7 @@ public class DefaultThreadPoolConfig extends DefaultObjectPoolConfig<WorkerThrea
 
         @Override
         protected DefaultThreadPoolConfig getPoolConfig() {
-            return (DefaultThreadPoolConfig) _config;
+            return (DefaultThreadPoolConfig) super.getPoolConfig();
         }
 
         @Override

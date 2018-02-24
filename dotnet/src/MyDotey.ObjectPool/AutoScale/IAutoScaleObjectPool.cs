@@ -9,6 +9,6 @@ namespace MyDotey.ObjectPool.AutoScale
 {
     public interface IAutoScaleObjectPool<T> : IObjectPool<T>
     {
-        new IObjectPoolConfig<T> Config { get; }
+        new IAutoScaleObjectPoolConfig<T> Config { get; }
     }
 }

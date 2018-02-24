@@ -9,15 +9,15 @@ namespace MyDotey.ObjectPool.AutoScale
 {
     public class AutoScaleObjectPoolConfig<T> : ObjectPoolConfig<T>, IAutoScaleObjectPoolConfig<T>
     {
-        public virtual long ObjectTtl { get; protected set; }
+        public virtual long ObjectTtl { get; private set; }
 
-        public virtual long MaxIdleTime { get; protected set; }
+        public virtual long MaxIdleTime { get; private set; }
 
-        public virtual Func<T, bool> StaleChecker { get; protected set; }
+        public virtual Func<T, bool> StaleChecker { get; private set; }
 
-        public virtual long CheckInterval { get; protected set; }
+        public virtual long CheckInterval { get; private set; }
 
-        public virtual int ScaleFactor { get; protected set; }
+        public virtual int ScaleFactor { get; private set; }
 
         protected AutoScaleObjectPoolConfig()
         {
@@ -32,13 +32,13 @@ namespace MyDotey.ObjectPool.AutoScale
         protected internal new abstract class AbstractBuilder<B> : ObjectPoolConfig<T>.AbstractBuilder<B>, IAbstractBuilder<T, B>
             where B : IAbstractBuilder<T, B>
         {
-            protected static readonly Func<T, bool> DEFAULT_STALE_CHECKER = o => false;
+            protected static readonly Func<T, bool> DefaultStaleChecker = o => false;
 
             protected AbstractBuilder()
             {
                 Config.ObjectTtl = long.MaxValue;
                 Config.MaxIdleTime = long.MaxValue;
-                Config.StaleChecker = DEFAULT_STALE_CHECKER;
+                Config.StaleChecker = DefaultStaleChecker;
                 Config.CheckInterval = 10 * 1000;
                 Config.ScaleFactor = 1;
             }
