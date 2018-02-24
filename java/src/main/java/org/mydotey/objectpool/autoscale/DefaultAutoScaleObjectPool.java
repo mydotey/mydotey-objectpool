@@ -1,8 +1,6 @@
 package org.mydotey.objectpool.autoscale;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,11 +39,7 @@ public class DefaultAutoScaleObjectPool<T> extends DefaultObjectPool<T> implemen
 
     @Override
     protected void init() {
-        _keyGenerator = new KeyGenerator();
-        _availableKeys = new LinkedBlockingDeque<>();
-        _entries = new ConcurrentHashMap<>();
-
-        tryAddNewEntry(getConfig().getMinSize());
+        super.init();
 
         _taskScheduler = Executors.newSingleThreadScheduledExecutor();
         _taskScheduler.scheduleWithFixedDelay(() -> DefaultAutoScaleObjectPool.this.autoCheck(),

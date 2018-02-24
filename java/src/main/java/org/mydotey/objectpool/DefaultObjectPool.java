@@ -8,6 +8,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class DefaultObjectPool<T> implements ObjectPool<T> {
     protected Object _addLock;
     protected volatile boolean _isClosed;
 
-    protected KeyGenerator _keyGenerator;
+    protected Supplier<Object> _keyGenerator;
     protected BlockingDeque<Object> _availableKeys;
     protected ConcurrentHashMap<Object, Entry<T>> _entries;
 
@@ -37,16 +38,22 @@ public class DefaultObjectPool<T> implements ObjectPool<T> {
         _config = config;
 
         _addLock = new Object();
+
+        _keyGenerator = newKeyGenerator();
+        _availableKeys = new LinkedBlockingDeque<>();
+        _entries = new ConcurrentHashMap<>();
+
         _acquiredSize = new AtomicInteger();
 
         init();
     }
 
-    protected void init() {
-        _keyGenerator = new KeyGenerator();
-        _availableKeys = new LinkedBlockingDeque<>(_config.getMaxSize());
-        _entries = new ConcurrentHashMap<>(_config.getMaxSize());
+    protected Supplier<Object> newKeyGenerator() {
+        KeyGenerator keyGenerator = new KeyGenerator();
+        return () -> keyGenerator.generateKey();
+    }
 
+    protected void init() {
         tryAddNewEntry(_config.getMinSize());
     }
 
@@ -86,7 +93,7 @@ public class DefaultObjectPool<T> implements ObjectPool<T> {
     }
 
     protected DefaultEntry<T> newPoolEntry() {
-        return newPoolEntry(_keyGenerator.generateKey());
+        return newPoolEntry(_keyGenerator.get());
     }
 
     protected DefaultEntry<T> newPoolEntry(Object key) {

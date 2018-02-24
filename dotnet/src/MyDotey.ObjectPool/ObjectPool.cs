@@ -19,7 +19,7 @@ namespace MyDotey.ObjectPool
 
         public virtual bool IsClosed { get; protected set; }
 
-        protected Entry.KeyGenerator _keyGenerator;
+        protected Func<Object> _keyGenerator;
         protected BlockingCollection<Object> _availableKeys;
         protected ConcurrentDictionary<Object, IEntry<T>> _entries;
 
@@ -34,15 +34,21 @@ namespace MyDotey.ObjectPool
 
             AddLock = new object();
 
+            _keyGenerator = NewKeyGenerator();
+            _availableKeys = new BlockingCollection<object>(new ConcurrentStack<object>());
+            _entries = new ConcurrentDictionary<object, IEntry<T>>();
+
             Init();
+        }
+
+        protected virtual Func<Object> NewKeyGenerator()
+        {
+            KeyGenerator keyGenerator = new KeyGenerator();
+            return () => keyGenerator.GenerateKey();
         }
 
         protected virtual void Init()
         {
-            _keyGenerator = new Entry.KeyGenerator();
-            _availableKeys = new BlockingCollection<object>(new ConcurrentStack<object>(), Config.MaxSize);
-            _entries = new ConcurrentDictionary<object, IEntry<T>>(4, Config.MaxSize);
-
             TryAddNewEntry(Config.MinSize);
         }
 
@@ -88,7 +94,7 @@ namespace MyDotey.ObjectPool
 
         protected virtual Entry NewPoolEntry()
         {
-            return NewPoolEntry(_keyGenerator.GenerateKey());
+            return NewPoolEntry(_keyGenerator());
         }
 
         protected virtual Entry NewPoolEntry(object key)
@@ -309,25 +315,25 @@ namespace MyDotey.ObjectPool
             {
                 return MemberwiseClone();
             }
+        }
 
-            public class KeyGenerator
+        protected internal class KeyGenerator
+        {
+            private long _counter;
+            private const long MAX = long.MaxValue / 2;
+
+            public KeyGenerator()
             {
-                private long _counter;
-                private const long MAX = long.MaxValue / 2;
 
-                public KeyGenerator()
-                {
+            }
 
-                }
+            public object GenerateKey()
+            {
+                long count = Interlocked.Increment(ref _counter);
+                if (count > MAX)
+                    ;//_logger.warn("{} objects created, maybe misused", count);
 
-                public object GenerateKey()
-                {
-                    long count = Interlocked.Increment(ref _counter);
-                    if (count > MAX)
-                        ;//_logger.warn("{} objects created, maybe misused", count);
-
-                    return count;
-                }
+                return count;
             }
         }
     }

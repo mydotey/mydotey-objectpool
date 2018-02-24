@@ -34,11 +34,7 @@ namespace MyDotey.ObjectPool.AutoScale
 
         protected override void Init()
         {
-            _keyGenerator = new ObjectPool<T>.Entry.KeyGenerator();
-            _availableKeys = new BlockingCollection<object>(new ConcurrentStack<object>());
-            _entries = new ConcurrentDictionary<object, IEntry<T>>();
-
-            TryAddNewEntry(Config.MinSize);
+            base.Init();
 
             _taskScheduler = new Thread(AutoCheck)
             {
