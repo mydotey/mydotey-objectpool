@@ -80,7 +80,7 @@ namespace MyDotey.ObjectPool.ThreadPool
                 }
             }
 
-            _logger.Info("thread terminated: {0}", InnerThread);
+            _logger.Info("thread terminated: {0}", InnerThread.ManagedThreadId);
         }
 
         protected internal virtual void SetTask(Action task)
@@ -104,7 +104,7 @@ namespace MyDotey.ObjectPool.ThreadPool
                 }
                 catch (ThreadInterruptedException )
                 {
-                    _logger.Info("thread {0} interrupted when starting", InnerThread);
+                    _logger.Info("thread {0} interrupted when starting", InnerThread.ManagedThreadId);
                     InnerThread.Interrupt();
                     break;
                 }

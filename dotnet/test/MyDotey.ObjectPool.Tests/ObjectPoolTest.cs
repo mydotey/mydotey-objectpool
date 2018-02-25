@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using NLog;
 using NLog.Config;
 using NLog.Targets;
 using MyDotey.ObjectPool.Facade;
@@ -33,7 +34,7 @@ namespace MyDotey.ObjectPool.Tests
         {
             var config = new LoggingConfiguration();
             var logconsole = new ConsoleTarget() { Name = "logconsole" };
-            config.LoggingRules.Add(new NLog.Config.LoggingRule("*", logconsole));
+            config.LoggingRules.Add(new NLog.Config.LoggingRule("*", LogLevel.Trace, logconsole));
             NLog.LogManager.Configuration = config;
         }
 
