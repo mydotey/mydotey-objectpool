@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using NLog;
 using MyDotey.ObjectPool.ThreadPool;
 using MyDotey.ObjectPool.Facade;
 
@@ -13,7 +14,7 @@ namespace MyDotey.ObjectPool.AutoScale
 {
     public class AutoScaleObjectPool<T> : ObjectPool<T>, IAutoScaleObjectPool<T>
     {
-        //private static Logger _logger = LoggerFactory.getLogger(AutoScaleObjectPool.class);
+        private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
         protected internal static long CurrentTimeMillis { get { return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond; } }
 
@@ -47,11 +48,11 @@ namespace MyDotey.ObjectPool.AutoScale
                 try
                 {
                     TryAddNewEntry(Config.ScaleFactor - 1);
-                    //_logger.info("scaleOut success");
+                    _logger.Info("scaleOut success");
                 }
                 catch (Exception ex)
                 {
-                    //_logger.error("scaleOut failed", ex);
+                    _logger.Error(ex, "scaleOut failed");
                 }
                 finally
                 {
@@ -175,7 +176,7 @@ namespace MyDotey.ObjectPool.AutoScale
                 {
                     Thread.Sleep((int)Config.CheckInterval);
                 }
-                catch (Exception ex)
+                catch
                 {
                     break;
                 }
@@ -213,7 +214,7 @@ namespace MyDotey.ObjectPool.AutoScale
             {
                 _entries.TryRemove(entry.Key, out IEntry<T> value);
                 Close(entry);
-                //_logger.info("scaled in an object: {}", entry.Object);
+                _logger.Info("scaled in an object: {0}", entry.Object);
             }
         }
 
@@ -246,15 +247,14 @@ namespace MyDotey.ObjectPool.AutoScale
             }
             catch (Exception e)
             {
-                //String errorMessage = String.Format("failed to refresh object: {0}, still use it", entry.Object);
-                //_logger.error(errorMessage, e);
+                _logger.Error(e, "failed to refresh object: {0}, still use it", entry.Object);
                 return false;
             }
 
             Close(entry);
             _entries.TryAdd(entry.Key, newEntry);
 
-            //_logger.info("refreshed an object, old: {0}, new: {1}", entry.Object, newEntry.Object);
+            _logger.Info("refreshed an object, old: {0}, new: {1}", entry.Object, newEntry.Object);
             return true;
         }
 
@@ -276,7 +276,7 @@ namespace MyDotey.ObjectPool.AutoScale
             }
             catch (Exception e)
             {
-                //_logger.error("staleChecker failed, ignore", e);
+                _logger.Error(e, "staleChecker failed, ignore");
                 return false;
             }
         }
@@ -299,7 +299,7 @@ namespace MyDotey.ObjectPool.AutoScale
             }
             catch (Exception e)
             {
-                // _logger.error("shutdown timer failed.", e);
+                _logger.Error(e, "shutdown timer failed.");
             }
         }
 
@@ -309,7 +309,7 @@ namespace MyDotey.ObjectPool.AutoScale
             {
                 _taskExecutor.Submit(task);
             }
-            catch (Exception ex)
+            catch
             {
                 task();
             }

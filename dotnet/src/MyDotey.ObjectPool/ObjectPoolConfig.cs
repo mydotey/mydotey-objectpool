@@ -1,4 +1,5 @@
 using System;
+using NLog;
 
 /**
  * @author koqizhao
@@ -37,8 +38,7 @@ namespace MyDotey.ObjectPool
         protected internal abstract class AbstractBuilder<B> : IAbstractBuilder<T, B>
             where B : IAbstractBuilder<T, B>
         {
-
-            //private static Logger _logger = LoggerFactory.getLogger\(objectPool.class);
+            private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
             public static readonly Action<IEntry<T>> DefaultOnCreate = e => { };
 
@@ -52,7 +52,7 @@ namespace MyDotey.ObjectPool
                     }
                     catch (Exception ex)
                     {
-                        //_logger.error("close object failed", ex);
+                        _logger.Error(ex, "close object failed");
                     }
                 }
             };

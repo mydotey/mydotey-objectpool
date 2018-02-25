@@ -105,9 +105,8 @@ namespace MyDotey.ObjectPool.ThreadPool
                     IEntry<WorkerThread> entry = ObjectPool.Acquire();
                     entry.Object.SetTask(task);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    //
                     break;
                 }
             }

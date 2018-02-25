@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Collections.Concurrent;
+using NLog;
 
 /**
  * @author koqizhao
@@ -11,7 +12,7 @@ namespace MyDotey.ObjectPool
 {
     public class ObjectPool<T> : IObjectPool<T>
     {
-        //private static Logger _logger = LoggerFactory.GetLogger(ObjectPool.class);
+        private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
         public virtual IObjectPoolConfig<T> Config { get; }
 
@@ -106,7 +107,7 @@ namespace MyDotey.ObjectPool
             }
             catch (Exception e)
             {
-                //_logger.error("onEntryCreate failed", e);
+                _logger.Error(e, "onEntryCreate failed");
             }
 
             return entry;
@@ -122,11 +123,11 @@ namespace MyDotey.ObjectPool
             T obj = Config.ObjectFactory();
             if (obj == null)
             {
-                //_logger.error("object factory Generated null, the object factory has bug");
+                _logger.Error("object factory generated null, the object factory has bug");
                 throw new InvalidOperationException("object factory Generated null");
             }
 
-            //_logger.info("new object created: {}", obj);
+            _logger.Info("new object created: {0}", obj);
             return obj;
         }
 
@@ -285,7 +286,7 @@ namespace MyDotey.ObjectPool
             }
             catch (Exception e)
             {
-                //_logger.error("Dispose object failed", e);
+                _logger.Error(e, "Close object failed");
             }
         }
 
@@ -331,7 +332,7 @@ namespace MyDotey.ObjectPool
             {
                 long count = Interlocked.Increment(ref _counter);
                 if (count > MAX)
-                    ;//_logger.warn("{} objects created, maybe misused", count);
+                    _logger.Warn("{0} objects created, maybe misused", count);
 
                 return count;
             }

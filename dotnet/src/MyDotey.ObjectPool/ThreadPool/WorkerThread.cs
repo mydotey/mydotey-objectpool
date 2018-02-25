@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using NLog;
 
 /**
  * @author koqizhao
@@ -10,7 +11,7 @@ namespace MyDotey.ObjectPool.ThreadPool
 {
     public class WorkerThread
     {
-        //private static Logger _logger = LoggerFactory.getLogger(WorkerThread.class);
+        private static ILogger _logger = LogManager.GetCurrentClassLogger();
 
         protected internal virtual Thread InnerThread { get; }
 
@@ -54,7 +55,7 @@ namespace MyDotey.ObjectPool.ThreadPool
                         }
                         catch (Exception ex)
                         {
-                            //_logger.error("onTaskComplete threw exception", ex);
+                            _logger.Error(ex, "onTaskComplete threw exception");
                             break;
                         }
                     }
@@ -63,7 +64,7 @@ namespace MyDotey.ObjectPool.ThreadPool
                     {
                         Monitor.Wait(_lock);
                     }
-                    catch (Exception e)
+                    catch
                     {
                         break;
                     }
@@ -74,12 +75,12 @@ namespace MyDotey.ObjectPool.ThreadPool
                     }
                     catch (Exception e)
                     {
-                        //_logger.error("task threw exception", e);
+                        _logger.Error(e, "task threw exception");
                     }
                 }
             }
 
-            //_logger.info("thread terminated: {}", _thread);
+            _logger.Info("thread terminated: {0}", InnerThread);
         }
 
         protected internal virtual void SetTask(Action task)
@@ -101,9 +102,9 @@ namespace MyDotey.ObjectPool.ThreadPool
                 {
                     Thread.Sleep(1);
                 }
-                catch (ThreadInterruptedException e)
+                catch (ThreadInterruptedException )
                 {
-                    //_logger.info("thread {} interrupted when starting", this);
+                    _logger.Info("thread {0} interrupted when starting", InnerThread);
                     InnerThread.Interrupt();
                     break;
                 }

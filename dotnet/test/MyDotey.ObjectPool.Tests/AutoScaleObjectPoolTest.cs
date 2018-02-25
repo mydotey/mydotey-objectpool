@@ -54,6 +54,7 @@ namespace MyDotey.ObjectPool.Tests
             }
         }
 
+        [Fact]
         public override void ThreadPoolSubmitTaskTest4()
         {
             int taskCount = _maxSize;
@@ -65,6 +66,7 @@ namespace MyDotey.ObjectPool.Tests
             ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }
 
+        [Fact]
         public override void ThreadPoolSubmitTaskTest6()
         {
             int taskCount = 200;
@@ -124,6 +126,7 @@ namespace MyDotey.ObjectPool.Tests
             ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize, pool);
         }
 
+        [Fact]
         public override void ThreadPoolSubmitTaskConcurrentTest()
         {
             int taskCount = 200;
@@ -136,6 +139,7 @@ namespace MyDotey.ObjectPool.Tests
                     NewThreadPool(), SubmissionMode.Concurrent);
         }
 
+        [Fact]
         public override void ThreadPoolSubmitTaskConcurrentTest2()
         {
             int taskCount = 200;

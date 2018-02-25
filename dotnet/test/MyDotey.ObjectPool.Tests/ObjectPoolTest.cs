@@ -2,6 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using NLog.Config;
+using NLog.Targets;
 using MyDotey.ObjectPool.Facade;
 using MyDotey.ObjectPool.ThreadPool;
 
@@ -26,6 +28,14 @@ namespace MyDotey.ObjectPool.Tests
         protected int _defaultSizeAfterSubmit = -1;
         protected long _defaultFinishSleep = 0;
         protected int _defaultFinalSize = -1;
+
+        public ObjectPoolTest()
+        {
+            var config = new LoggingConfiguration();
+            var logconsole = new ConsoleTarget() { Name = "logconsole" };
+            config.LoggingRules.Add(new NLog.Config.LoggingRule("*", logconsole));
+            NLog.LogManager.Configuration = config;
+        }
 
         protected virtual IThreadPool NewThreadPool()
         {
