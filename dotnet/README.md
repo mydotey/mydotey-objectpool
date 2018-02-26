@@ -1,4 +1,4 @@
-mydotey objectpool dotnet
+MyDotey ObjectPool dotnet
 ================
 
 ## NuGet package

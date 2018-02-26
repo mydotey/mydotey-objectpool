@@ -1,9 +1,9 @@
-mydotey objectpool
+MyDotey ObjectPool
 ================
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-mydotey objectpool，1个通用的对象池，基于ConcurrentHashMap和BlockingQueue实现，代码简洁，容易理解。
+MyDotey ObjectPool，1个通用的对象池，基于ConcurrentHashMap和BlockingQueue实现，代码简洁，容易理解。
 
 提供了java和dotnet 2种实现。
 

@@ -1,4 +1,4 @@
-mydotey objectpool java
+MyDotey ObjectPool java
 ================
 
 ## maven dependency
