@@ -8,7 +8,7 @@ builder.setMaxSize(10))
     .setMinSize(1)
     .setObjectFactory(() -> new Object());
 ObjectPoolConfig<Object> config = builder.build();
-ObjectPool objectPool = ObjectPools.newObjectPool(config);
+ObjectPool<Object> objectPool = ObjectPools.newObjectPool(config);
 
 Entry<Object> entry = null;
 try {
@@ -23,7 +23,7 @@ try {
 
 ## AutoScaleObjectPool
 ```
-AutoScaleObjectPoolConfig.Builder<WorkerThread> builder = ObjectPools.newAutoScaleObjectPoolConfigBuilder();
+AutoScaleObjectPoolConfig.Builder<Object> builder = ObjectPools.newAutoScaleObjectPoolConfigBuilder();
 builder.setMaxSize(100))
     .setMinSize(10)
     .setObjectFactory(() -> new Object())
@@ -32,8 +32,8 @@ builder.setMaxSize(100))
     .setMaxIdleTime(1 * 60 * 1000)
     .setScaleFactor(5)
     .setStaleChecker(o -> false);
-AutoScaleObjectPoolConfig<WorkerThread> config = builder.build();
-AutoScaleObjectPool<WorkerThread> objectPool = ObjectPools.newAutoScaleObjectPool(config);
+AutoScaleObjectPoolConfig<Object> config = builder.build();
+AutoScaleObjectPool<Object> objectPool = ObjectPools.newAutoScaleObjectPool(config);
 
 Entry<Object> entry = null;
 try {
