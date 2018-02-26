@@ -20,15 +20,20 @@ import org.mydotey.objectpool.threadpool.autoscale.DefaultAutoScaleThreadPool;
 public class AutoScaleObjectPoolTest extends ObjectPoolTest {
 
     @Override
-    protected ThreadPool newThreadPool() {
-        return newThreadPool(TimeUnit.SECONDS.toMillis(2), TimeUnit.SECONDS.toMillis(2), TimeUnit.SECONDS.toMillis(10));
+    protected ThreadPool newThreadPool(int queueCapacity) {
+        return newThreadPool(TimeUnit.SECONDS.toMillis(2), TimeUnit.SECONDS.toMillis(2), TimeUnit.SECONDS.toMillis(10),
+                queueCapacity);
+    }
+
+    protected ThreadPool newThreadPool(long checkInterval, long maxIdleTime, long ttl) {
+        return newThreadPool(checkInterval, maxIdleTime, ttl, 0);
     }
 
     @SuppressWarnings("unchecked")
-    protected ThreadPool newThreadPool(long checkInterval, long maxIdleTime, long ttl) {
+    protected ThreadPool newThreadPool(long checkInterval, long maxIdleTime, long ttl, int queueCapacity) {
         AutoScaleThreadPoolConfig.Builder builder = ThreadPools.newAutoScaleThreadPoolConfigBuilder();
         builder.setMinSize(_minSize).setMaxSize(_maxSize).setScaleFactor(5).setCheckInterval(checkInterval)
-                .setMaxIdleTime(maxIdleTime).setQueueCapacity(0);
+                .setMaxIdleTime(maxIdleTime).setQueueCapacity(queueCapacity);
         return new DefaultAutoScaleThreadPool(builder.build()) {
             @Override
             protected void setObjectPoolConfigBuilder(ObjectPoolConfig.AbstractBuilder<WorkerThread, ?> builder) {
@@ -58,6 +63,19 @@ public class AutoScaleObjectPoolTest extends ObjectPoolTest {
         long finishSleep = 10000;
         int finalSize = _minSize;
         threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
+    }
+
+    @Override
+    public void threadPoolSubmitTaskTest7() throws IOException, InterruptedException {
+        int taskCount = 200;
+        long taskSleep = 2000;
+        long viInitDelay = _defaultViInitDelay;
+        int sizeAfterSubmit = _maxSize;
+        long finishSleep = 10000;
+        int finalSize = _minSize;
+        int queueCapacity = 10;
+        threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
+                newThreadPool(queueCapacity));
     }
 
     @Test

@@ -40,8 +40,13 @@ namespace MyDotey.ObjectPool.Tests
 
         protected virtual IThreadPool NewThreadPool()
         {
+            return NewThreadPool(0);
+        }
+
+        protected virtual IThreadPool NewThreadPool(int queueCapacity)
+        {
             IBuilder Builder = ThreadPools.NewThreadPoolConfigBuilder();
-            Builder.SetMinSize(_minSize).SetMaxSize(_maxSize).SetQueueCapacity(0);
+            Builder.SetMinSize(_minSize).SetMaxSize(_maxSize).SetQueueCapacity(queueCapacity);
             return ThreadPools.NewThreadPool(Builder.Build());
         }
 
@@ -62,11 +67,11 @@ namespace MyDotey.ObjectPool.Tests
         {
             int taskCount = _minSize;
             long taskSleep = _defaultTaskSleep;
-            long ViInitDelay = _defaultViInitDelay;
+            long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _minSize;
             long finishSleep = 1;
             int finalSize = _defaultFinalSize;
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize);
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }
 
         [Fact]
@@ -74,23 +79,23 @@ namespace MyDotey.ObjectPool.Tests
         {
             int taskCount = _minSize;
             long taskSleep = 10;
-            long ViInitDelay = _defaultViInitDelay;
+            long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _minSize;
             long finishSleep = 1000;
             int finalSize = _minSize;
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize);
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }
 
         [Fact]
         public virtual void ThreadPoolSubmitTaskTest3()
         {
             int taskCount = 50;
-            long taskSleep = 50;
-            long ViInitDelay = _defaultViInitDelay;
+            long taskSleep = 100;
+            long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _defaultSizeAfterSubmit;
             long finishSleep = 1000;
             int finalSize = _defaultFinalSize;
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize);
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }
 
         [Fact]
@@ -98,23 +103,23 @@ namespace MyDotey.ObjectPool.Tests
         {
             int taskCount = _maxSize;
             long taskSleep = 500;
-            long ViInitDelay = _defaultViInitDelay;
+            long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _maxSize;
             long finishSleep = 5000;
             int finalSize = _maxSize;
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize);
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }
 
         [Fact]
         public virtual void ThreadPoolSubmitTaskTest5()
         {
             int taskCount = 200;
-            long taskSleep = 50;
-            long ViInitDelay = _defaultViInitDelay;
+            long taskSleep = 100;
+            long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _maxSize;
             long finishSleep = 1000;
             int finalSize = _maxSize;
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize);
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }
 
         [Fact]
@@ -122,11 +127,25 @@ namespace MyDotey.ObjectPool.Tests
         {
             int taskCount = 200;
             long taskSleep = 2000;
-            long ViInitDelay = _defaultViInitDelay;
+            long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _maxSize;
             long finishSleep = 5000;
             int finalSize = _maxSize;
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize);
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
+        }
+
+        [Fact]
+        public virtual void ThreadPoolSubmitTaskTest7()
+        {
+            int taskCount = 200;
+            long taskSleep = 2000;
+            long viInitDelay = _defaultViInitDelay;
+            int sizeAfterSubmit = _maxSize;
+            long finishSleep = 5000;
+            int finalSize = _maxSize;
+            int queueCapacity = 10;
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
+                NewThreadPool(queueCapacity));
         }
 
         [Fact(Skip = "stress")]
@@ -145,16 +164,24 @@ namespace MyDotey.ObjectPool.Tests
                 ThreadPoolSubmitTaskTest4();
         }
 
+        [Fact(Skip = "stress")]
+        public virtual void ThreadPoolSubmitTaskStressTest3()
+        {
+            int count = 100;
+            for (int i = 0; i < count; i++)
+                ThreadPoolSubmitTaskTest7();
+        }
+
         [Fact]
         public virtual void ThreadPoolSubmitTaskConcurrentTest()
         {
             int taskCount = 200;
             long taskSleep = 2000;
-            long ViInitDelay = _defaultViInitDelay;
+            long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _defaultSizeAfterSubmit;
             long finishSleep = 5000;
             int finalSize = _maxSize;
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize,
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
                     NewThreadPool(), SubmissionMode.Concurrent);
         }
 
@@ -163,29 +190,29 @@ namespace MyDotey.ObjectPool.Tests
         {
             int taskCount = 200;
             long taskSleep = 2000;
-            long ViInitDelay = _defaultViInitDelay;
+            long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _defaultSizeAfterSubmit;
             long finishSleep = 5000;
             int finalSize = _maxSize;
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize,
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
                     NewThreadPool(), SubmissionMode.SelfSelf);
         }
 
-        protected virtual void ThreadPoolSubmitTaskTestInternal(int taskCount, long taskSleep, long ViInitDelay, int sizeAfterSubmit,
+        protected virtual void ThreadPoolSubmitTaskTestInternal(int taskCount, long taskSleep, long viInitDelay, int sizeAfterSubmit,
                 long finishSleep, int finalSize)
         {
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize,
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
                     NewThreadPool());
         }
 
-        protected virtual void ThreadPoolSubmitTaskTestInternal(int taskCount, long taskSleep, long ViInitDelay, int sizeAfterSubmit,
+        protected virtual void ThreadPoolSubmitTaskTestInternal(int taskCount, long taskSleep, long viInitDelay, int sizeAfterSubmit,
                 long finishSleep, int finalSize, IThreadPool customPool)
         {
-            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, ViInitDelay, sizeAfterSubmit, finishSleep, finalSize, customPool,
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize, customPool,
                     SubmissionMode.SingleThread);
         }
 
-        protected virtual void ThreadPoolSubmitTaskTestInternal(int taskCount, long taskSleep, long ViInitDelay, int sizeAfterSubmit,
+        protected virtual void ThreadPoolSubmitTaskTestInternal(int taskCount, long taskSleep, long viInitDelay, int sizeAfterSubmit,
                 long finishSleep, int finalSize, IThreadPool customPool, SubmissionMode submissionMode)
         {
             Console.WriteLine();
@@ -200,7 +227,13 @@ namespace MyDotey.ObjectPool.Tests
                 if (taskSleep <= 0)
                     return;
 
-                Thread.Sleep((int)taskSleep);
+                try
+                {
+                    Thread.Sleep((int)taskSleep);
+                }
+                catch
+                {
+                }
             };
             long now = CurrentTimeMillis;
             Timer ViTimer = null;

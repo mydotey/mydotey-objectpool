@@ -36,8 +36,12 @@ public class ObjectPoolTest {
     protected int _defaultFinalSize = -1;
 
     protected ThreadPool newThreadPool() {
+        return newThreadPool(0);
+    }
+
+    protected ThreadPool newThreadPool(int queueCapacity) {
         ThreadPoolConfig.Builder builder = ThreadPools.newThreadPoolConfigBuilder();
-        builder.setMinSize(_minSize).setMaxSize(_maxSize).setQueueCapacity(0);
+        builder.setMinSize(_minSize).setMaxSize(_maxSize).setQueueCapacity(queueCapacity);
         return ThreadPools.newThreadPool(builder.build());
     }
 
@@ -77,7 +81,7 @@ public class ObjectPoolTest {
     @Test
     public void threadPoolSubmitTaskTest3() throws IOException, InterruptedException {
         int taskCount = 50;
-        long taskSleep = 50;
+        long taskSleep = 100;
         long viInitDelay = _defaultViInitDelay;
         int sizeAfterSubmit = _defaultSizeAfterSubmit;
         long finishSleep = 1000;
@@ -99,7 +103,7 @@ public class ObjectPoolTest {
     @Test
     public void threadPoolSubmitTaskTest5() throws IOException, InterruptedException {
         int taskCount = 200;
-        long taskSleep = 50;
+        long taskSleep = 100;
         long viInitDelay = _defaultViInitDelay;
         int sizeAfterSubmit = _maxSize;
         long finishSleep = 1000;
@@ -119,6 +123,19 @@ public class ObjectPoolTest {
     }
 
     @Test
+    public void threadPoolSubmitTaskTest7() throws IOException, InterruptedException {
+        int taskCount = 200;
+        long taskSleep = 2000;
+        long viInitDelay = _defaultViInitDelay;
+        int sizeAfterSubmit = _maxSize;
+        long finishSleep = 5000;
+        int finalSize = _maxSize;
+        int queueCapacity = 10;
+        threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
+                newThreadPool(queueCapacity));
+    }
+
+    @Test
     @Ignore
     public void threadPoolSubmitTaskStressTest() throws IOException, InterruptedException {
         int count = 100;
@@ -132,6 +149,14 @@ public class ObjectPoolTest {
         int count = 100;
         for (int i = 0; i < count; i++)
             threadPoolSubmitTaskTest4();
+    }
+
+    @Test
+    @Ignore
+    public void threadPoolSubmitTaskStressTest3() throws IOException, InterruptedException {
+        int count = 100;
+        for (int i = 0; i < count; i++)
+            threadPoolSubmitTaskTest7();
     }
 
     @Test

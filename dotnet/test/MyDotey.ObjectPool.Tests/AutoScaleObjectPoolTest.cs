@@ -35,14 +35,24 @@ namespace MyDotey.ObjectPool.Tests
 
         protected override IThreadPool NewThreadPool()
         {
-            return NewThreadPool(2 * 1000, 2 * 1000, 10 * 1000);
+            return NewThreadPool(0);
+        }
+
+        protected override IThreadPool NewThreadPool(int queueCapacity)
+        {
+            return NewThreadPool(2 * 1000, 2 * 1000, 10 * 1000, queueCapacity);
         }
 
         protected virtual IThreadPool NewThreadPool(long checkInterval, long maxIdleTime, long ttl)
         {
+            return NewThreadPool(checkInterval, maxIdleTime, ttl, 0);
+        }
+
+        protected virtual IThreadPool NewThreadPool(long checkInterval, long maxIdleTime, long ttl, int queueCapacity)
+        {
             ThreadPool.AutoScale.IBuilder builder = ThreadPools.NewAutoScaleThreadPoolConfigBuilder();
             builder.SetMinSize(_minSize).SetMaxSize(_maxSize).SetScaleFactor(5).SetCheckInterval(checkInterval)
-                    .SetMaxIdleTime(maxIdleTime).SetQueueCapacity(0);
+                    .SetMaxIdleTime(maxIdleTime).SetQueueCapacity(queueCapacity);
             _objectTtl = ttl;
             try
             {
@@ -77,6 +87,21 @@ namespace MyDotey.ObjectPool.Tests
             int finalSize = _minSize;
             ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }
+
+        [Fact]
+        public override void ThreadPoolSubmitTaskTest7()
+        {
+            int taskCount = 200;
+            long taskSleep = 2000;
+            long viInitDelay = _defaultViInitDelay;
+            int sizeAfterSubmit = _maxSize;
+            long finishSleep = 10000;
+            int finalSize = _minSize;
+            int queueCapacity = 10;
+            ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize,
+                NewThreadPool(queueCapacity));
+        }
+
 
         [Fact]
         public virtual void ThreadPoolSubmitTaskMoreTest()
