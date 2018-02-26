@@ -1,6 +1,11 @@
 mydotey objectpool dotnet
 ================
 
+## NuGet package
+```
+dotnet add package MyDotey.ObjectPool -v 1.0.0-rc01
+```
+
 ## ObjectPool
 ```
 IBuilder<object> builder = ObjectPools.NewObjectPoolConfigBuilder<object>();

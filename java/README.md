@@ -1,6 +1,15 @@
 mydotey objectpool java
 ================
 
+## maven dependency
+```
+<dependency>
+    <groupId>org.mydotey.objectpool</groupId>
+    <artifactId>mydotey-objectpool</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
 ## ObjectPool
 ```
 ObjectPoolConfig.Builder<Object> builder = ObjectPools.newObjectPoolConfigBuilder();
