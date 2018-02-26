@@ -90,10 +90,10 @@ namespace MyDotey.ObjectPool.Tests
         public virtual void ThreadPoolSubmitTaskTest3()
         {
             int taskCount = 50;
-            long taskSleep = 100;
+            long taskSleep = 1000;
             long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _defaultSizeAfterSubmit;
-            long finishSleep = 1000;
+            long finishSleep = 2000;
             int finalSize = _defaultFinalSize;
             ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }
@@ -102,7 +102,7 @@ namespace MyDotey.ObjectPool.Tests
         public virtual void ThreadPoolSubmitTaskTest4()
         {
             int taskCount = _maxSize;
-            long taskSleep = 500;
+            long taskSleep = 1000;
             long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _maxSize;
             long finishSleep = 5000;
@@ -114,10 +114,10 @@ namespace MyDotey.ObjectPool.Tests
         public virtual void ThreadPoolSubmitTaskTest5()
         {
             int taskCount = 200;
-            long taskSleep = 100;
+            long taskSleep = 1000;
             long viInitDelay = _defaultViInitDelay;
             int sizeAfterSubmit = _maxSize;
-            long finishSleep = 1000;
+            long finishSleep = 2000;
             int finalSize = _maxSize;
             ThreadPoolSubmitTaskTestInternal(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
         }

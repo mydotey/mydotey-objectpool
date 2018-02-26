@@ -81,10 +81,10 @@ public class ObjectPoolTest {
     @Test
     public void threadPoolSubmitTaskTest3() throws IOException, InterruptedException {
         int taskCount = 50;
-        long taskSleep = 100;
+        long taskSleep = 1000;
         long viInitDelay = _defaultViInitDelay;
         int sizeAfterSubmit = _defaultSizeAfterSubmit;
-        long finishSleep = 1000;
+        long finishSleep = 2000;
         int finalSize = _defaultFinalSize;
         threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
     }
@@ -92,7 +92,7 @@ public class ObjectPoolTest {
     @Test
     public void threadPoolSubmitTaskTest4() throws IOException, InterruptedException {
         int taskCount = _maxSize;
-        long taskSleep = 500;
+        long taskSleep = 1000;
         long viInitDelay = _defaultViInitDelay;
         int sizeAfterSubmit = _maxSize;
         long finishSleep = 5000;
@@ -103,10 +103,10 @@ public class ObjectPoolTest {
     @Test
     public void threadPoolSubmitTaskTest5() throws IOException, InterruptedException {
         int taskCount = 200;
-        long taskSleep = 100;
+        long taskSleep = 1000;
         long viInitDelay = _defaultViInitDelay;
         int sizeAfterSubmit = _maxSize;
-        long finishSleep = 1000;
+        long finishSleep = 2000;
         int finalSize = _maxSize;
         threadPoolSubmitTaskTest(taskCount, taskSleep, viInitDelay, sizeAfterSubmit, finishSleep, finalSize);
     }
