@@ -1,8 +1,7 @@
-MyDotey ObjectPool java
-================
+# MyDotey ObjectPool java
 
 ## maven dependency
-```
+```xml
 <dependency>
     <groupId>org.mydotey.objectpool</groupId>
     <artifactId>mydotey-objectpool</artifactId>
@@ -11,7 +10,7 @@ MyDotey ObjectPool java
 ```
 
 ## ObjectPool
-```
+```java
 ObjectPoolConfig.Builder<Object> builder = ObjectPools.newObjectPoolConfigBuilder();
 builder.setMaxSize(10))
     .setMinSize(1)
@@ -31,7 +30,7 @@ try {
 ```
 
 ## AutoScaleObjectPool
-```
+```java
 AutoScaleObjectPoolConfig.Builder<Object> builder = ObjectPools.newAutoScaleObjectPoolConfigBuilder();
 builder.setMaxSize(100))
     .setMinSize(10)
@@ -56,7 +55,7 @@ try {
 ```
 
 ## ThreadPool
-```
+```java
 ThreadPoolConfig.Builder builder = ThreadPools.newThreadPoolConfigBuilder();
 builder.setMinSize(1)
     .setMaxSize(10)
@@ -68,7 +67,7 @@ threadPool.submit(() -> System.out.println("Hello, world!"));
 ```
 
 ## AutoScaleThreadPool
-```
+```java
 AutoScaleThreadPoolConfig.Builder builder = ThreadPools.newAutoScaleThreadPoolConfigBuilder();
 builder.setMinSize(10)
     .setMaxSize(100)

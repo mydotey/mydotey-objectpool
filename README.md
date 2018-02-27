@@ -1,5 +1,4 @@
-MyDotey ObjectPool
-================
+# MyDotey ObjectPool
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -9,7 +8,7 @@ MyDotey ObjectPool，1个通用的对象池，基于ConcurrentHashMap和Blocking
 
 更多产品介绍参见: https://github.com/mydotey/mydotey-objectpool/wiki
 
-# Features
+## Features
 * 通用对象池：ObjectPool
   * acquire，获取1个对象，如果无可用对象，阻塞调用
 
@@ -32,7 +31,7 @@ MyDotey ObjectPool，1个通用的对象池，基于ConcurrentHashMap和Blocking
 * 通用自伸缩线程池：AutoScaleThreadPool
   * 基于AutoScaleObjectPool实现
 
-# Configuration
+## Configuration
 * 对象池
   * minSize，最少保持对象数，默认为0
 
@@ -59,13 +58,13 @@ MyDotey ObjectPool，1个通用的对象池，基于ConcurrentHashMap和Blocking
 * 线程池
   * queueCapacity，任务队列大小限制，默认int.Max，如设置为0，表示不进行入缓冲队列
 
-# Usage
+## Usage
 * java
 https://github.com/mydotey/mydotey-objectpool/tree/master/java
 
 * dotnet
 https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
 
-# Developers
+## Developers
 * Qiang Zhao <koqizhao@outllook.com>
 
