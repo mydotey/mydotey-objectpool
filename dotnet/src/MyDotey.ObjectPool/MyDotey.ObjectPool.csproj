@@ -2,6 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyTitle>MyDotey.ObjectPool</AssemblyTitle>
+    <AssemblyName>MyDotey.ObjectPool</AssemblyName>
+    <PackageId>MyDotey.ObjectPool</PackageId>
+    <Version>1.0.0-rc03</Version>
+    <Authors>koqizhao</Authors>
+    <Description>a generic object pool</Description>
+    <Copyright>koqizhao</Copyright>
+
+    <PackageTags>objectpool;threadpool</PackageTags>
+    <PackageReleaseNotes>object pool, auto scale object pool, thread pool, auto scale thread pool</PackageReleaseNotes>
+    <PackageIconUrl>http://numl.net/images/ico.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/mydotey/mydotey-objectpool</PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/mydotey/mydotey-objectpool.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
