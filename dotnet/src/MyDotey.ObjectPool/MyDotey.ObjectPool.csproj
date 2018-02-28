@@ -7,7 +7,7 @@
     <PackageId>MyDotey.ObjectPool</PackageId>
     <Version>1.0.0-rc03</Version>
     <Authors>koqizhao</Authors>
-    <Description>a generic object pool</Description>
+    <Description>a generic object pool, with a generic thread pool based on the object pool</Description>
     <Copyright>koqizhao</Copyright>
 
     <PackageTags>objectpool;threadpool</PackageTags>
