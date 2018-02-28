@@ -6,7 +6,12 @@ MyDotey ObjectPool，1个通用的对象池，基于ConcurrentHashMap和Blocking
 
 提供了java和dotnet 2种实现。
 
-更多产品介绍参见: https://github.com/mydotey/mydotey-objectpool/wiki
+## Usage
+* java
+https://github.com/mydotey/mydotey-objectpool/tree/master/java
+
+* dotnet
+https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
 
 ## Features
 * 通用对象池：ObjectPool
@@ -57,13 +62,6 @@ MyDotey ObjectPool，1个通用的对象池，基于ConcurrentHashMap和Blocking
 
 * 线程池
   * queueCapacity，任务队列大小限制，默认int.Max，如设置为0，表示不进行入缓冲队列
-
-## Usage
-* java
-https://github.com/mydotey/mydotey-objectpool/tree/master/java
-
-* dotnet
-https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
 
 ## Developers
 * Qiang Zhao <koqizhao@outllook.com>
