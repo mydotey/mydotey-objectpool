@@ -2,9 +2,11 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-MyDotey ObjectPool，1个通用的对象池，基于ConcurrentHashMap和BlockingQueue实现，代码简洁，容易理解。
+MyDotey ObjectPool, a generic object pool, implementatin based on ConcurrentHashMap & BlockingQueue, easy to use.
 
-提供了java和dotnet 2种实现。
+Implemented in java/dotnet separately. Code is clean. Easy to read.
+
+ThreadPool & AutoScaleThreadPool are implemented based on the ObjectPool & AutoScaleObjectPool as well.
 
 ## Usage
 * java
@@ -14,54 +16,54 @@ https://github.com/mydotey/mydotey-objectpool/tree/master/java
 https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
 
 ## Features
-* 通用对象池：ObjectPool
-  * acquire，获取1个对象，如果无可用对象，阻塞调用
+* ObjectPool
+  * acquire, get an object, if no object, block the call
 
-  * tryAcquire，获取1个对象，如果无可用对象，返回null，不阻塞调用
+  * tryAcquire, get an object, if no object, get null
 
-  * release，释放对象
+  * release, return an object to pool
 
-* 通用自伸缩对象池：AutoScaleObjectPool
-  * 自动过期刷新
+* AutoScaleObjectPool
+  * self-refreshing automatically
 
-  * 自动闲置回收
+  * close idle objects automatically
 
-  * 自动故障检测替换
+  * recognize stale object and replace with new none automatically
 
-  * 批量扩容
+  * scale out batch objects
 
-* 通用线程池：ThreadPool
-  * 基于ObjectPool实现
+* ThreadPool
+  * implementation based on object pool
 
-* 通用自伸缩线程池：AutoScaleThreadPool
-  * 基于AutoScaleObjectPool实现
+* AutoScaleThreadPool
+  * implementation based on auto scale object pool
 
 ## Configuration
-* 对象池
-  * minSize，最少保持对象数，默认为0
+* ObjectPool
+  * minSize, min size objects in pool, default to 0
 
-  * maxSize，最多保持对象数，必须配置
+  * maxSize, max size objects in pool, required
 
-  * objectFactory，对象创建逻辑，必须配置
+  * objectFactory, object creation logic, required
 
-  * onCreate，对象创建后的扩展点，默认无操作
+  * onCreate, object creation hook, default to no hook
 
-  * onClose，对象关闭时的扩展点，可用于释放对象资源，默认自动关闭Closeable/Disposable对象
+  * onClose, object close hook, the default behavior is to invoke close/dispose method automatically for Closeable/Disposable objects
 
-* 自动伸缩对象池
+* AutoScaleObjectPool
 
-  * objectTtl，对象最长生存时间，过期后，自动回收对象，重新创建1个新的对象，默认long.Max
+  * objectTtl, unit ms, object max live time, if reached, remove it & create a new one, default to long max
 
-  * maxIdleTime，对象最长闲置时间，过期后，自动回收对象，默认long.Max
+  * maxIdleTime, unit ms, max idle time, if reached, remove it, default to long Max
 
-  * staleChecker，对象损坏检测扩展点，可用于自定义故障检测逻辑，如果检测到损坏，自动回收对象，重现创建1个新的对象，默认总认为不stale
+  * staleChecker, object stale decision maker, if one is stale, remove it & replace with a new one, default to always not stale
+  
+  * checkInterval, unit ms, default to 10 * 1000 ms
 
-  * checkInterval，对象过期、闲置、损坏的定期检查间隔，默认10s
+  * scaleFactor, the batch size when scaling out, default to 1
 
-  * scaleFactor，当需要扩容时，批量扩容数目，默认为1
-
-* 线程池
-  * queueCapacity，任务队列大小限制，默认int.Max，如设置为0，表示不进行入缓冲队列
+* ThreadPool
+  * queueCapacity, size limit of the task queue, if set to 0, no queue is used, default to int max
 
 ## Developers
 * Qiang Zhao <koqizhao@outllook.com>
