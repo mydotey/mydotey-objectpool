@@ -2,7 +2,7 @@
 
 ## NuGet package
 ```
-dotnet add package MyDotey.ObjectPool -v 1.0.0-rc03
+dotnet add package MyDotey.ObjectPool -v 1.0.1
 ```
 
 ## ObjectPool

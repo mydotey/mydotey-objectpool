@@ -5,7 +5,7 @@
     <AssemblyTitle>MyDotey.ObjectPool</AssemblyTitle>
     <AssemblyName>MyDotey.ObjectPool</AssemblyName>
     <PackageId>MyDotey.ObjectPool</PackageId>
-    <Version>1.0.0-rc03</Version>
+    <Version>1.0.1</Version>
     <Authors>koqizhao</Authors>
     <Description>a generic object pool, with a generic thread pool based on the object pool</Description>
     <Copyright>koqizhao</Copyright>
@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.5.0-rc06" />
+    <PackageReference Include="NLog" Version="4.5.0" />
   </ItemGroup>
 
 </Project>

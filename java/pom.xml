@@ -5,7 +5,7 @@
 
     <groupId>org.mydotey.objectpool</groupId>
     <artifactId>mydotey-objectpool</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <name>mydotey object pool</name>
     <description>a generic object pool, with a generic thread pool sample use</description>
@@ -87,6 +87,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -5,7 +5,7 @@
 <dependency>
     <groupId>org.mydotey.objectpool</groupId>
     <artifactId>mydotey-objectpool</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
