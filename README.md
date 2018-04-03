@@ -9,13 +9,15 @@ Implemented in java/dotnet separately. Code is clean. Easy to read.
 ThreadPool & AutoScaleThreadPool are implemented based on the ObjectPool & AutoScaleObjectPool as well.
 
 ## Usage
+
 * java
-https://github.com/mydotey/mydotey-objectpool/tree/master/java
+  https://github.com/mydotey/mydotey-objectpool/tree/master/java
 
 * dotnet
-https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
+  https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
 
 ## Features
+
 * ObjectPool
   * acquire, get an object, if no object, block the call
 
@@ -39,6 +41,7 @@ https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
   * implementation based on auto scale object pool
 
 ## Configuration
+
 * ObjectPool
   * minSize, min size objects in pool, default to 0
 
@@ -57,7 +60,7 @@ https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
   * maxIdleTime, unit ms, max idle time, if reached, remove it, default to long Max
 
   * staleChecker, object stale decision maker, if one is stale, remove it & replace with a new one, default to always not stale
-  
+
   * checkInterval, unit ms, default to 10 * 1000 ms
 
   * scaleFactor, the batch size when scaling out, default to 1
@@ -66,5 +69,6 @@ https://github.com/mydotey/mydotey-objectpool/tree/master/dotnet
   * queueCapacity, size limit of the task queue, if set to 0, no queue is used, default to int max
 
 ## Developers
+
 * Qiang Zhao <koqizhao@outllook.com>
 

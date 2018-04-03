@@ -1,11 +1,13 @@
 # MyDotey ObjectPool dotnet
 
 ## NuGet package
-```
+
+```sh
 dotnet add package MyDotey.ObjectPool -v 1.0.1
 ```
 
 ## ObjectPool
+
 ```cs
 IBuilder<object> builder = ObjectPools.NewObjectPoolConfigBuilder<object>();
 builder.SetMaxSize(10))
@@ -29,6 +31,7 @@ finally
 ```
 
 ## AutoScaleObjectPool
+
 ```cs
 IBuilder<object> builder = ObjectPools.NewAutoScaleObjectPoolConfigBuilder<object>();
 builder.SetMaxSize(100))
@@ -57,6 +60,7 @@ finally
 ```
 
 ## ThreadPool
+
 ```cs
 IBuilder builder = ThreadPools.NewThreadPoolConfigBuilder();
 builder.SetMinSize(1)
@@ -69,6 +73,7 @@ threadPool.Submit(() => Console.WriteLine("Hello, world!"));
 ```
 
 ## AutoScaleThreadPool
+
 ```cs
 IBuilder builder = ThreadPools.NewAutoScaleThreadPoolConfigBuilder();
 builder.SetMinSize(10)
