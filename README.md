@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-MyDotey ObjectPool, a generic object pool, implementatin based on ConcurrentHashMap & BlockingQueue, easy to use.
+MyDotey ObjectPool, a generic object pool, implementation based on ConcurrentHashMap & BlockingQueue, easy to use.
 
 Implemented in java/dotnet separately. Code is clean. Easy to read.
 
@@ -70,5 +70,5 @@ ThreadPool & AutoScaleThreadPool are implemented based on the ObjectPool & AutoS
 
 ## Developers
 
-* Qiang Zhao <koqizhao@outllook.com>
+* Qiang Zhao <koqizhao@outlook.com>
 
